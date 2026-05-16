@@ -49,24 +49,30 @@ php -S localhost:8000
 │   │   ├── layout.css       # Сайдбар + grid + адаптив
 │   │   ├── components.css   # Карточки, кнопки, скелетоны
 │   │   ├── animations.css   # @keyframes и reveal-on-scroll
+│   │   ├── tracker.css      # Стили трекера (чипы, циклы, торговцы)
 │   │   └── main.css         # @import всего выше
 │   ├── js/
-│   │   ├── config.js        # API URL, TTL кэша, языки
+│   │   ├── config.js        # API URL, TTL кэша, языки, настройки трекера
 │   │   ├── i18n.js          # Переводы (data-i18n атрибуты)
-│   │   ├── api.js           # fetch + sessionStorage кэш
+│   │   ├── api.js           # fetch + sessionStorage кэш worldstate
 │   │   ├── sidebar.js       # Гамбургер, навигация, тосты «Скоро»
 │   │   ├── animations.js    # Hero canvas + IntersectionObserver
-│   │   ├── main.js          # Точка входа
-│   │   └── sections/
-│   │       ├── news.js      # Секция новостей
-│   │       └── alerts.js    # Секция активных событий
+│   │   ├── main.js          # Точка входа главной
+│   │   ├── tracker.js       # Точка входа трекера
+│   │   ├── sections/        # Секции главной (news, alerts)
+│   │   └── tracker/         # Модули трекера
+│   │       ├── settings.js  # Настройки + localStorage + UI
+│   │       ├── format.js    # Локальное время + единый тикер
+│   │       ├── recommend.js # Оценочная длительность + ценность дропа
+│   │       └── sections/    # cycles, activities, fissures, live, nightwave, traders, recommended
 │   ├── i18n/
 │   │   ├── ru.json          # Русские строки (по умолчанию)
 │   │   └── en.json          # Английские строки
 │   └── img/
 │       ├── favicon.svg
 │       └── logo.svg
-└── pages/                   # Сюда лягут будущие страницы (wiki.html и т.д.)
+└── pages/
+    └── tracker.html         # Трекер событий и торговцев
 ```
 
 ---
@@ -119,8 +125,8 @@ GET https://api.warframestat.us/pc?language=ru
 ## Что в планах
 
 - [x] Главная — hero, новости, активные события, переключение языков
+- [x] **Трекер** — циклы планет, Sortie/Archon/Arbitration/Archimedea/Steel Path, разломы (обычные + SP), алерты/вторжения/события, особые события (TennoCon/годовщина), Nightwave-задания, торговцы (Баро, Варзия, Дарво, Nightwave). Настройки времени, фильтры, рекомендации, локальный часовой пояс
 - [ ] **Вики** — Warframes, оружие, моды, фракции
-- [ ] **Трекер** — все события с таймерами, история
 - [ ] **Билдер** — ручной + ИИ, инвентарь модов/мистификаторов
 - [ ] **Звёздная карта** — миссии, квесты, Рейлджек, Дуивири, Стальной путь
 

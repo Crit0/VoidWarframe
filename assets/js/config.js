@@ -8,4 +8,8 @@ export const CONFIG = {
   CACHE_PREFIX: "vw_cache_",
   NEWS_LIMIT: 6,
   ALERTS_LIMIT: 6,
+  TRACKER_TICK_MS: 1000,
+  TRACKER_SETTINGS_KEY: "vw_tracker_settings",
+  RECOMMEND_LIMIT: 6,
+  CDN_IMG: "https://cdn.warframestat.us/img/",
 };

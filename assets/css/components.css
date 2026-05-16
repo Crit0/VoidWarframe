@@ -205,6 +205,12 @@
   text-transform: uppercase;
 }
 
+.card__badge--live {
+  background: rgba(0, 255, 156, 0.15);
+  color: var(--neon-green);
+  border-color: rgba(0, 255, 156, 0.4);
+}
+
 /* ===== News card ===== */
 .news-card {
   display: flex;

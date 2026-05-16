@@ -36,6 +36,7 @@
   "features": {
     "title": "Что будет на сайте",
     "sub": "Каждый раздел уже в разработке",
+    "live": "Доступно",
     "wiki": {
       "title": "Вики",
       "desc": "Полная справка по всему: Warframes, оружие, моды, фракции, локации и механики игры."
@@ -76,5 +77,123 @@
     "copy": "© 2026 Void Warframe — неофициальный фан-сайт. Warframe® является торговой маркой Digital Extremes Ltd.",
     "api": "Данные предоставлены",
     "github": "GitHub"
+  },
+  "tracker": {
+    "title": "Трекер",
+    "subtitle": "Всё, что сейчас происходит в Warframe — в вашем часовом поясе",
+    "settings": {
+      "budget": "Сколько у меня времени",
+      "recommend": "Рекомендации",
+      "filters": "Фильтры",
+      "reset": "Сброс",
+      "budget.15m": "15 мин",
+      "budget.30m": "30 мин",
+      "budget.1h": "1 ч",
+      "budget.2h": "2 ч",
+      "budget.4h": "4 ч",
+      "budget.inf": "Без лимита",
+      "recommend.on": "Включить",
+      "recommend.valuable": "Ценный дроп",
+      "recommend.fits": "Подходит по времени"
+    },
+    "filters": {
+      "cycles": "Циклы",
+      "recommended": "Рекомендации",
+      "sortie": "Sortie",
+      "archon": "Архон-охота",
+      "arbitration": "Арбитраж",
+      "archimedea": "Глубокий Архимед",
+      "steelPath": "Стальной путь",
+      "fissures": "Разломы",
+      "alerts": "Алерты",
+      "invasions": "Вторжения",
+      "events": "События",
+      "special": "Особые",
+      "nightwave": "Nightwave",
+      "traders": "Торговцы"
+    },
+    "sections": {
+      "recommended": "Рекомендовано вам",
+      "cycles": "Циклы планет",
+      "sortie": "Sortie",
+      "archon": "Архон-охота",
+      "arbitration": "Арбитраж",
+      "archimedea": "Глубокий Архимед",
+      "steelPath": "Стальной путь",
+      "fissures": "Разломы Бездны",
+      "invasions": "Вторжения",
+      "alerts": "Алерты",
+      "events": "События",
+      "special": "Особое событие",
+      "nightwave": "Nightwave",
+      "traders": "Торговцы",
+      "live": "Активно сейчас"
+    },
+    "cycles": {
+      "earth.label": "Земля",
+      "earth.day": "День",
+      "earth.night": "Ночь",
+      "cetus.label": "Цетус",
+      "cetus.day": "День",
+      "cetus.night": "Ночь",
+      "vallis.label": "Орб Венеры",
+      "vallis.warm": "Тепло",
+      "vallis.cold": "Холод",
+      "cambion.label": "Камбион Дрифт",
+      "cambion.fass": "Фасс",
+      "cambion.vome": "Воме",
+      "duviri.label": "Дуивири",
+      "duviri.joy": "Радость",
+      "duviri.anger": "Гнев",
+      "duviri.sorrow": "Печаль",
+      "duviri.fear": "Страх",
+      "duviri.envy": "Зависть",
+      "zariman.label": "Заримам",
+      "zariman.corpus": "Корпус",
+      "zariman.grineer": "Гринир"
+    },
+    "time": {
+      "endsAt": "до {time} ({left})",
+      "startsIn": "начнётся в {time} (через {left})",
+      "ended": "завершено"
+    },
+    "fissures": {
+      "normal": "Обычные",
+      "sp": "Стальной путь",
+      "tier": "Тир",
+      "storm": "Шторм",
+      "hard": "Стальной путь"
+    },
+    "nightwave": {
+      "daily": "Ежедневное",
+      "weekly": "Еженедельное",
+      "elite": "Элитное",
+      "rep": "{n} реп.",
+      "series": "Серия {n}"
+    },
+    "traders": {
+      "baro": "Баро Ки'Тир",
+      "varzia": "Варзия",
+      "darvo": "Дарво",
+      "nightwave": "Магазин Nightwave",
+      "location": "Локация",
+      "arrives": "Прибудет через",
+      "arrivesAt": "Прибудет",
+      "leaves": "Остался",
+      "away": "Отсутствует",
+      "here": "На месте",
+      "ducats": "дк",
+      "credits": "кр",
+      "discount": "Скидка",
+      "stock": "Осталось",
+      "empty": "Инвентарь скоро появится",
+      "nightwaveHint": "Награды Nightwave: смотрите задания текущей серии ниже"
+    },
+    "empty": {
+      "section": "Пока ничего активного"
+    },
+    "recommend": {
+      "none": "Под выбранные параметры ничего не нашлось. Попробуйте увеличить бюджет времени или отключить «ценный дроп»."
+    }
   }
 }

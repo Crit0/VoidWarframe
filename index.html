@@ -28,7 +28,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12a4 4 0 014 4v12H8a4 4 0 01-4-4V4z"/><path d="M4 16h14"/></svg>
             <span data-i18n="nav.wiki">Вики</span>
           </a>
-          <a class="sidebar__link" href="pages/tracker.html" data-placeholder data-soon="" data-i18n-attr="data-soon:nav.soon">
+          <a class="sidebar__link" href="pages/tracker.html">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
             <span data-i18n="nav.tracker">Трекер</span>
           </a>
@@ -114,14 +114,14 @@
                 <h3 class="card__title" data-i18n="features.wiki.title">Вики</h3>
                 <p class="card__desc" data-i18n="features.wiki.desc">Полная справка по всему.</p>
               </article>
-              <article class="card reveal" data-delay="2">
-                <span class="card__badge" data-i18n="nav.soon">Скоро</span>
+              <a class="card reveal" data-delay="2" href="pages/tracker.html">
+                <span class="card__badge card__badge--live" data-i18n="features.live">Доступно</span>
                 <div class="card__icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
                 </div>
                 <h3 class="card__title" data-i18n="features.tracker.title">Трекер</h3>
                 <p class="card__desc" data-i18n="features.tracker.desc">Активные, грядущие и прошедшие события.</p>
-              </article>
+              </a>
               <article class="card reveal" data-delay="3">
                 <span class="card__badge" data-i18n="nav.soon">Скоро</span>
                 <div class="card__icon">

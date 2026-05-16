@@ -36,6 +36,7 @@
   "features": {
     "title": "What's on the site",
     "sub": "Each section is already in development",
+    "live": "Live",
     "wiki": {
       "title": "Wiki",
       "desc": "Full reference for everything: Warframes, weapons, mods, factions, locations and mechanics."
@@ -76,5 +77,123 @@
     "copy": "© 2026 Void Warframe — unofficial fan site. Warframe® is a trademark of Digital Extremes Ltd.",
     "api": "Data by",
     "github": "GitHub"
+  },
+  "tracker": {
+    "title": "Tracker",
+    "subtitle": "Everything happening in Warframe right now — in your local timezone",
+    "settings": {
+      "budget": "How much time?",
+      "recommend": "Recommendations",
+      "filters": "Filters",
+      "reset": "Reset",
+      "budget.15m": "15 min",
+      "budget.30m": "30 min",
+      "budget.1h": "1 h",
+      "budget.2h": "2 h",
+      "budget.4h": "4 h",
+      "budget.inf": "No limit",
+      "recommend.on": "Enabled",
+      "recommend.valuable": "Valuable drop",
+      "recommend.fits": "Fits time"
+    },
+    "filters": {
+      "cycles": "Cycles",
+      "recommended": "Recommended",
+      "sortie": "Sortie",
+      "archon": "Archon Hunt",
+      "arbitration": "Arbitration",
+      "archimedea": "Deep Archimedea",
+      "steelPath": "Steel Path",
+      "fissures": "Fissures",
+      "alerts": "Alerts",
+      "invasions": "Invasions",
+      "events": "Events",
+      "special": "Special",
+      "nightwave": "Nightwave",
+      "traders": "Traders"
+    },
+    "sections": {
+      "recommended": "Recommended for you",
+      "cycles": "Planet cycles",
+      "sortie": "Sortie",
+      "archon": "Archon Hunt",
+      "arbitration": "Arbitration",
+      "archimedea": "Deep Archimedea",
+      "steelPath": "Steel Path",
+      "fissures": "Void Fissures",
+      "invasions": "Invasions",
+      "alerts": "Alerts",
+      "events": "Events",
+      "special": "Special event",
+      "nightwave": "Nightwave",
+      "traders": "Traders",
+      "live": "Live now"
+    },
+    "cycles": {
+      "earth.label": "Earth",
+      "earth.day": "Day",
+      "earth.night": "Night",
+      "cetus.label": "Cetus",
+      "cetus.day": "Day",
+      "cetus.night": "Night",
+      "vallis.label": "Orb Vallis",
+      "vallis.warm": "Warm",
+      "vallis.cold": "Cold",
+      "cambion.label": "Cambion Drift",
+      "cambion.fass": "Fass",
+      "cambion.vome": "Vome",
+      "duviri.label": "Duviri",
+      "duviri.joy": "Joy",
+      "duviri.anger": "Anger",
+      "duviri.sorrow": "Sorrow",
+      "duviri.fear": "Fear",
+      "duviri.envy": "Envy",
+      "zariman.label": "Zariman",
+      "zariman.corpus": "Corpus",
+      "zariman.grineer": "Grineer"
+    },
+    "time": {
+      "endsAt": "until {time} ({left})",
+      "startsIn": "starts at {time} (in {left})",
+      "ended": "ended"
+    },
+    "fissures": {
+      "normal": "Normal",
+      "sp": "Steel Path",
+      "tier": "Tier",
+      "storm": "Storm",
+      "hard": "Steel Path"
+    },
+    "nightwave": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "elite": "Elite",
+      "rep": "{n} rep",
+      "series": "Series {n}"
+    },
+    "traders": {
+      "baro": "Baro Ki'Teer",
+      "varzia": "Varzia",
+      "darvo": "Darvo",
+      "nightwave": "Nightwave Shop",
+      "location": "Location",
+      "arrives": "Arrives in",
+      "arrivesAt": "Arrives",
+      "leaves": "Leaves in",
+      "away": "Away",
+      "here": "Here now",
+      "ducats": "duc",
+      "credits": "cr",
+      "discount": "Discount",
+      "stock": "Stock",
+      "empty": "Inventory coming soon",
+      "nightwaveHint": "Nightwave rewards: see the active challenges below for this series"
+    },
+    "empty": {
+      "section": "Nothing active right now"
+    },
+    "recommend": {
+      "none": "Nothing matches your filters. Try a larger time budget or turn off 'Valuable drop'."
+    }
   }
 }
