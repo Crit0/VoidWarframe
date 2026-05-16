@@ -46,6 +46,15 @@ export function initSidebar() {
     });
   });
 
+  // Also intercept placeholder elsewhere on the page (hero CTAs, bottom-nav, feature cards)
+  document.querySelectorAll("a[data-placeholder]").forEach((link) => {
+    if (link.classList.contains("sidebar__link")) return;
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      showToast(t("nav.comingSoon"));
+    });
+  });
+
   const path = location.pathname.split("/").pop() || "index.html";
   document.querySelectorAll(".sidebar__link").forEach((link) => {
     const href = link.getAttribute("href");

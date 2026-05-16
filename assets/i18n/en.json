@@ -1,10 +1,11 @@
 {
   "meta": {
-    "title": "Void Warframe — Warframe Community & Tools",
-    "description": "Warframe fan site: wiki, event tracker, mod builder, star chart. Live data from api.warframestat.us."
+    "title": "Voide Warframe — Warframe Community & Tools",
+    "description": "Voide Warframe fan site: wiki, event tracker, mod builder, star chart. Live data from api.warframestat.us."
   },
   "brand": {
-    "name": "Void Warframe"
+    "name": "Voide Warframe",
+    "sub": "Tenno Network"
   },
   "nav": {
     "home": "Home",
@@ -22,7 +23,7 @@
   },
   "hero": {
     "eyebrow": "Tenno · Network active",
-    "title": "VOID WARFRAME",
+    "title": "VOIDE WARFRAME",
     "tagline": "Everything Warframe in one place: wiki, event tracker, mod builder and interactive star chart. Live data, straight from the game.",
     "ctaPrimary": "Get started",
     "ctaSecondary": "Open Wiki"
@@ -74,7 +75,7 @@
     "retry": "Retry"
   },
   "footer": {
-    "copy": "© 2026 Void Warframe — unofficial fan site. Warframe® is a trademark of Digital Extremes Ltd.",
+    "copy": "© 2026 Voide Warframe — unofficial fan site. Warframe® is a trademark of Digital Extremes Ltd.",
     "api": "Data by",
     "github": "GitHub"
   },
@@ -193,7 +194,75 @@
       "section": "Nothing active right now"
     },
     "recommend": {
-      "none": "Nothing matches your filters. Try a larger time budget or turn off 'Valuable drop'."
+      "none": "Nothing matches your filters. Try a larger time budget or turn off 'Valuable drop'.",
+      "highlight": {
+        "label": "Best fit for your time",
+        "youHave": "You have {n} min",
+        "youHaveInf": "Unlimited time",
+        "btn": "Plot route"
+      }
+    },
+    "rewardsLabel": "Rewards",
+    "timeLeft": "Time left",
+    "details": "Details",
+    "tabs": {
+      "all": "All events",
+      "important": "Important",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "cycles": "Cycles",
+      "operations": "Operations",
+      "traders": "Traders"
+    },
+    "status": {
+      "important": "Key",
+      "urgent": "Urgent",
+      "new": "New",
+      "active": "Active"
+    },
+    "eventType": {
+      "daily": "Daily event",
+      "weekly": "Weekly event",
+      "weeklyDeep": "Deep Archimedea",
+      "arbitration": "Arbitration",
+      "operation": "Operation",
+      "special": "Special event",
+      "invasion": "Invasion",
+      "alert": "Alert",
+      "fissure": "Void Fissure",
+      "nightwave": "Nightwave",
+      "event": "Event"
+    },
+    "refresh": {
+      "label": "Refresh in",
+      "now": "Refreshing…"
+    },
+    "server": {
+      "label": "Server status",
+      "ok": "All systems nominal",
+      "stale": "Cached data",
+      "error": "API unreachable"
+    },
+    "rail": {
+      "timeFilter": "Time filter",
+      "timeHint": "Tell us how much time you have — we'll show the best events",
+      "map": "Show on map",
+      "mapHint": "Interactive star chart coming soon"
+    },
+    "sheet": {
+      "open": "Filters",
+      "title": "Filters & settings",
+      "close": "Close"
+    },
+    "footer": {
+      "quote": "Remember Tenno: time is just another resource"
     }
+  },
+  "bottomNav": {
+    "home": "Home",
+    "tracker": "Tracker",
+    "map": "Map",
+    "builder": "Builder",
+    "menu": "Menu"
   }
 }

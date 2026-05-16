@@ -1,9 +1,14 @@
+import { CONFIG } from "./config.js";
 import { initI18n, applyI18n, setLang, getLang, onLangChange, t } from "./i18n.js";
 import { getWorldstate } from "./api.js";
 import { initSidebar } from "./sidebar.js";
 import { initReveal } from "./animations.js";
-import { mountSettingsStrip, getSettings, onSettingsChange } from "./tracker/settings.js";
+import { injectGlyphs } from "./glyphs.js";
+import {
+  getSettings, onSettingsChange, mountRightRail, mountSheet, mountTabs,
+} from "./tracker/settings.js";
 import { startTicker } from "./tracker/format.js";
+import { startRefreshCycle, formatRefreshRemaining } from "./tracker/refresh.js";
 import * as Cycles from "./tracker/sections/cycles.js";
 import * as Activities from "./tracker/sections/activities.js";
 import * as Fissures from "./tracker/sections/fissures.js";
@@ -13,42 +18,94 @@ import * as Traders from "./tracker/sections/traders.js";
 import * as Recommended from "./tracker/sections/recommended.js";
 
 let lastData = null;
-let lastStale = false;
+let lastStatus = "ok"; // ok | stale | error
 
-function $(sel) { return document.querySelector(sel); }
+const $ = (sel) => document.querySelector(sel);
 
 function ctxNow() {
-  return { lang: getLang(), settings: getSettings(), stale: lastStale };
+  return { lang: getLang(), settings: getSettings(), status: lastStatus };
 }
 
 function setupLangSwitcher() {
-  const buttons = document.querySelectorAll(".header__lang button");
-  const sync = (lang) => buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
-  sync(getLang());
-  buttons.forEach((b) => {
+  document.querySelectorAll(".header__lang button").forEach((b) => {
     b.addEventListener("click", async () => {
       const lang = b.dataset.lang;
       if (lang === getLang()) return;
       await setLang(lang);
-      sync(lang);
       await loadAndRender(true);
     });
   });
+  const sync = (lang) => {
+    document.querySelectorAll(".header__lang button").forEach((b) =>
+      b.setAttribute("aria-pressed", String(b.dataset.lang === lang))
+    );
+  };
+  sync(getLang());
   onLangChange(sync);
 }
 
-function applyVisibility() {
-  const s = getSettings();
-  const sectionMap = {
-    "section-recommended": s.filters.recommended && s.recommend.on,
-    "section-cycles": s.filters.cycles,
-    "section-activities": s.filters.sortie || s.filters.archon || s.filters.arbitration || s.filters.archimedea || s.filters.steelPath,
-    "section-fissures": s.filters.fissures,
-    "section-live": s.filters.alerts || s.filters.invasions || s.filters.events || s.filters.special,
-    "section-nightwave": s.filters.nightwave,
-    "section-traders": s.filters.traders,
+function setupFilterSheet() {
+  const sheet = $("#tracker-sheet");
+  const btn = $("[data-open-sheet]");
+  if (sheet) mountSheet(sheet);
+  if (btn && sheet) btn.addEventListener("click", () => sheet.classList.add("is-open"));
+}
+
+function setServerStatus(state) {
+  lastStatus = state;
+  document.querySelectorAll("[data-server-status]").forEach((el) => {
+    el.dataset.state = state;
+    const text = el.querySelector(".status-pill__text, .sidebar__status-text");
+    if (text) text.textContent = t(`tracker.server.${state}`);
+  });
+}
+
+function updateTabCounts() {
+  if (!lastData) return;
+  const counts = computeTabCounts(lastData);
+  document.querySelectorAll(".tracker-tab[data-tab]").forEach((b) => {
+    const c = counts[b.dataset.tab];
+    const badge = b.querySelector(".tracker-tab__count");
+    if (badge) badge.textContent = c != null ? String(c) : "0";
+  });
+}
+
+function computeTabCounts(d) {
+  const len = (v) => (Array.isArray(v) ? v.length : 0);
+  const activitiesCount =
+    (d.sortie && !d.sortie.expired ? 1 : 0) +
+    (d.archonHunt && !d.archonHunt.expired ? 1 : 0) +
+    (d.arbitration && !d.arbitration.expired && d.arbitration.node ? 1 : 0) +
+    (Array.isArray(d.archimedeas) ? d.archimedeas.length : 0) +
+    (d.steelPath ? 1 : 0);
+  const liveCount = len(d.events) + len(d.alerts) + (d.invasions || []).filter((i) => !i.completed).length;
+  const fissuresCount = len(d.fissures);
+  const tradersCount =
+    (d.voidTrader ? 1 : 0) + (d.vaultTrader ? 1 : 0) + ((d.dailyDeals || []).length ? 1 : 0) + (d.nightwave ? 1 : 0);
+
+  return {
+    all: activitiesCount + liveCount + fissuresCount + 6,
+    important: activitiesCount,
+    daily: (d.sortie && !d.sortie.expired ? 1 : 0) + (d.arbitration && !d.arbitration.expired ? 1 : 0),
+    weekly: (d.archonHunt && !d.archonHunt.expired ? 1 : 0) + (Array.isArray(d.archimedeas) ? d.archimedeas.length : 0) + (d.steelPath ? 1 : 0),
+    cycles: 6,
+    operations: liveCount,
+    traders: tradersCount,
   };
-  Object.entries(sectionMap).forEach(([id, visible]) => {
+}
+
+function applyTabVisibility() {
+  const tab = getSettings().tab;
+  const map = {
+    "section-recommended": tab === "all" || tab === "important",
+    "section-cycles":      tab === "all" || tab === "cycles",
+    "section-activities":  tab === "all" || tab === "important" || tab === "daily" || tab === "weekly",
+    "section-fissures":    tab === "all" || tab === "important",
+    "section-live":        tab === "all" || tab === "operations" || tab === "important",
+    "section-nightwave":   tab === "all" || tab === "weekly",
+    "section-traders":     tab === "all" || tab === "traders",
+  };
+  Object.entries(map).forEach(([id, visible]) => {
     const el = document.getElementById(id);
     if (el) el.hidden = !visible;
   });
@@ -57,23 +114,16 @@ function applyVisibility() {
 function renderAll() {
   if (!lastData) return;
   const ctx = ctxNow();
-  Recommended.renderRecommended($("#recommended-grid"), lastData, ctx);
+  Recommended.renderHighlight($("#recommended-highlight"), lastData, ctx);
   Cycles.renderCycles($("#cycles-grid"), lastData, ctx);
   Activities.renderActivities($("#activities-grid"), lastData, ctx);
   Fissures.renderFissures($("#fissures-wrap"), lastData, ctx);
   Live.renderLive($("#live-grid"), lastData, ctx);
   Nightwave.renderNightwave($("#nightwave-grid"), lastData, ctx);
   Traders.renderTraders($("#traders-grid"), lastData, ctx);
-  applyVisibility();
+  updateTabCounts();
+  applyTabVisibility();
   applyI18n();
-  toggleStaleBanner(ctx.stale);
-}
-
-function toggleStaleBanner(stale) {
-  const el = $("#tracker-stale");
-  if (!el) return;
-  el.hidden = !stale;
-  el.textContent = stale ? t("errors.cached") : "";
 }
 
 function renderSkeletons() {
@@ -83,33 +133,24 @@ function renderSkeletons() {
   Live.renderSkeletons($("#live-grid"));
   Nightwave.renderSkeletons($("#nightwave-grid"));
   Traders.renderSkeletons($("#traders-grid"));
-  Recommended.renderSkeletons($("#recommended-grid"));
+  Recommended.renderSkeletons($("#recommended-highlight"));
   applyI18n();
 }
 
 async function loadAndRender(force = false) {
-  renderSkeletons();
+  if (force) renderSkeletons();
   try {
     const { data, stale } = await getWorldstate(getLang(), { force });
     lastData = data;
-    lastStale = !!stale;
+    setServerStatus(stale ? "stale" : "ok");
     renderAll();
   } catch (err) {
-    console.error("Tracker API error:", err);
-    showErrorBanner();
+    console.error("[VW] tracker fetch failed:", err);
+    setServerStatus("error");
+    if (!lastData) {
+      showFatal(err);
+    }
   }
-}
-
-function showErrorBanner() {
-  const el = $("#tracker-stale");
-  if (!el) return;
-  el.hidden = false;
-  el.classList.add("status-banner--error");
-  el.innerHTML = `<span>${t("errors.api")}</span><button class="status-banner__retry" type="button">${t("errors.retry")}</button>`;
-  el.querySelector(".status-banner__retry").addEventListener("click", () => {
-    el.classList.remove("status-banner--error");
-    loadAndRender(true);
-  });
 }
 
 function showFatal(err) {
@@ -118,18 +159,33 @@ function showFatal(err) {
   el.hidden = false;
   el.classList.add("status-banner--error");
   const msg = (err && err.message) || String(err);
-  el.textContent = `Ошибка инициализации / Init error: ${msg}`;
+  el.textContent = `${t("errors.api")} — ${msg}`;
+}
+
+function setupRefreshUi() {
+  const refreshLabel = $("#refresh-label");
+  const refreshTime = $("#refresh-time");
+  if (refreshLabel) refreshLabel.textContent = t("tracker.refresh.label");
+  startRefreshCycle({
+    intervalMs: CONFIG.CACHE_TTL_MS,
+    onTick: (ms) => { if (refreshTime) refreshTime.textContent = formatRefreshRemaining(ms); },
+    onRefresh: () => loadAndRender(true),
+  });
 }
 
 async function bootstrap() {
   try {
     await initI18n();
+    await injectGlyphs();
     initSidebar();
     setupLangSwitcher();
-    mountSettingsStrip($(".tracker-settings"));
+    setupFilterSheet();
+    mountRightRail($(".right-rail"));
+    mountTabs($(".tracker-tabs"));
     applyI18n();
     startTicker(document);
     initReveal();
+    setupRefreshUi();
     onSettingsChange(() => { if (lastData) renderAll(); });
     await loadAndRender();
   } catch (err) {

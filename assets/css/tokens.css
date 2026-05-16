@@ -1,8 +1,13 @@
 :root {
-  --bg-0: #05060a;
-  --bg-1: #0b0f1a;
+  --bg-0: #03050a;
+  --bg-1: #0a0f1c;
   --bg-2: #111827;
-  --bg-card: rgba(17, 24, 39, 0.65);
+  --bg-card: rgba(10, 15, 28, 0.72);
+
+  --ink: #050810;
+  --panel: rgba(8, 12, 22, 0.85);
+  --panel-strong: rgba(8, 12, 22, 0.96);
+  --panel-light: rgba(20, 28, 48, 0.6);
 
   --neon-cyan: #00f0ff;
   --neon-magenta: #ff2bd6;
@@ -11,23 +16,36 @@
   --neon-green: #00ff9c;
   --neon-red: #ff3355;
 
-  --text-0: #e8f6ff;
+  --gold: #f5c463;
+  --gold-dim: #b9863f;
+  --gold-deep: #6a4a16;
+
+  --text-0: #ecf3ff;
   --text-1: #9fb3c8;
   --text-2: #5b6b80;
   --border: rgba(0, 240, 255, 0.18);
-  --border-strong: rgba(0, 240, 255, 0.38);
+  --border-strong: rgba(0, 240, 255, 0.4);
+  --border-gold: rgba(245, 196, 99, 0.38);
+  --border-gold-strong: rgba(245, 196, 99, 0.65);
 
   --glow-cyan: 0 0 8px #00f0ff, 0 0 24px rgba(0, 240, 255, 0.45);
   --glow-magenta: 0 0 8px #ff2bd6, 0 0 24px rgba(255, 43, 214, 0.4);
+  --glow-gold: 0 0 8px var(--gold), 0 0 24px rgba(245, 196, 99, 0.45);
   --glow-soft: 0 0 12px rgba(0, 240, 255, 0.25);
+  --glow-soft-gold: 0 0 12px rgba(245, 196, 99, 0.25);
+
+  --ornate-line: linear-gradient(90deg, transparent, var(--gold-dim) 20%, var(--gold) 50%, var(--gold-dim) 80%, transparent);
 
   --font-display: "Orbitron", "Rajdhani", system-ui, sans-serif;
   --font-body: "Rajdhani", "Segoe UI", system-ui, sans-serif;
   --font-mono: "Share Tech Mono", ui-monospace, monospace;
 
   --sidebar-w: 240px;
-  --header-h: 64px;
+  --rightrail-w: 300px;
+  --header-h: 72px;
+  --bottom-nav-h: 64px;
   --radius: 6px;
   --radius-lg: 12px;
+  --radius-xl: 18px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }

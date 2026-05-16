@@ -87,6 +87,15 @@ export function startTicker(root = document) {
       const frac = progressFraction(a, e);
       el.style.width = `${(frac * 100).toFixed(2)}%`;
     });
+    root.querySelectorAll("[data-dial-progress]").forEach((el) => {
+      const [a, e] = el.dataset.dialProgress.split("|");
+      if (!a || !e) return;
+      const r = Number(el.getAttribute("r")) || 40;
+      const circ = 2 * Math.PI * r;
+      const frac = progressFraction(a, e);
+      el.setAttribute("stroke-dasharray", circ.toFixed(2));
+      el.setAttribute("stroke-dashoffset", (circ * (1 - frac)).toFixed(2));
+    });
   };
   tick();
   setInterval(tick, CONFIG.TRACKER_TICK_MS);

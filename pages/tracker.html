@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#05060a" />
-    <title>Void Warframe — Трекер</title>
-    <meta name="description" content="Трекер событий Warframe в реальном времени." />
+    <meta name="theme-color" content="#03050a" />
+    <title>Voide Warframe — Трэкер</title>
+    <meta name="description" content="Трекер событий Warframe в реальном времени с учётом вашего часового пояса." />
     <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -13,15 +13,18 @@
     <link rel="stylesheet" href="../assets/css/main.css" />
   </head>
   <body>
-    <div class="app">
+    <div class="app has-rail">
       <aside class="sidebar" aria-label="Primary">
-        <div class="sidebar__brand">
+        <a class="sidebar__brand" href="../index.html">
           <img class="sidebar__brand-mark" src="../assets/img/logo.svg" alt="" />
-          <span class="sidebar__brand-name" data-i18n="brand.name">Void Warframe</span>
-        </div>
+          <span>
+            <span class="sidebar__brand-name" data-i18n="brand.name">Voide Warframe</span>
+            <span class="sidebar__brand-sub" data-i18n="brand.sub">Tenno Network</span>
+          </span>
+        </a>
         <nav class="sidebar__nav">
           <a class="sidebar__link" href="../index.html">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+            <svg viewBox="0 0 24 24"><use href="#g-home"/></svg>
             <span data-i18n="nav.home">Главная</span>
           </a>
           <a class="sidebar__link" href="wiki.html" data-placeholder data-soon="" data-i18n-attr="data-soon:nav.soon">
@@ -29,11 +32,11 @@
             <span data-i18n="nav.wiki">Вики</span>
           </a>
           <a class="sidebar__link" href="tracker.html">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <svg viewBox="0 0 24 24"><use href="#g-tracker"/></svg>
             <span data-i18n="nav.tracker">Трекер</span>
           </a>
           <a class="sidebar__link" href="builder.html" data-placeholder data-soon="" data-i18n-attr="data-soon:nav.soon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3l7 7-9 9-7-7 9-9z"/><path d="M9 8l7 7"/></svg>
+            <svg viewBox="0 0 24 24"><use href="#g-builder"/></svg>
             <span data-i18n="nav.builder">Билдер</span>
           </a>
           <a class="sidebar__link" href="inventory.html" data-placeholder data-soon="" data-i18n-attr="data-soon:nav.soon">
@@ -41,10 +44,14 @@
             <span data-i18n="nav.inventory">Инвентарь модов</span>
           </a>
           <a class="sidebar__link" href="starchart.html" data-placeholder data-soon="" data-i18n-attr="data-soon:nav.soon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(45 12 12)"/><ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(-45 12 12)"/></svg>
+            <svg viewBox="0 0 24 24"><use href="#g-map"/></svg>
             <span data-i18n="nav.starchart">Звёздная карта</span>
           </a>
         </nav>
+        <div class="sidebar__status" data-server-status data-state="ok">
+          <div class="sidebar__status-label" data-i18n="tracker.server.label">Статус серверов</div>
+          <div class="sidebar__status-line"><span class="dot"></span><span class="sidebar__status-text" data-i18n="tracker.server.ok">Все системы в норме</span></div>
+        </div>
         <div class="sidebar__footer">
           <span data-i18n="footer.api">Данные</span>
           <a href="https://docs.warframestat.us/" target="_blank" rel="noopener">warframestat.us</a>
@@ -55,10 +62,35 @@
       <div class="main">
         <header class="header">
           <button class="header__burger" type="button" aria-label="Toggle menu" data-i18n-attr="aria-label:nav.toggle">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20"><use href="#g-menu"/></svg>
           </button>
-          <span class="header__title" data-i18n="brand.name">Void Warframe</span>
+          <a class="brand" href="../index.html">
+            <img class="brand__mark" src="../assets/img/logo.svg" alt="" />
+            <span class="brand__text">
+              <span class="brand__name" data-i18n="brand.name">Voide Warframe</span>
+              <span class="brand__sub" data-i18n="brand.sub">Tenno Network</span>
+            </span>
+          </a>
+          <span class="section-title-bar" aria-hidden="true">
+            <span class="section-title-bar__dot"></span>
+            <span data-i18n="tracker.title">Трэкер</span>
+          </span>
           <span class="header__spacer"></span>
+          <div class="header__status">
+            <span class="refresh-pill" aria-live="off">
+              <svg><use href="#g-clock"/></svg>
+              <span id="refresh-label" data-i18n="tracker.refresh.label">Обновление через</span>
+              <span id="refresh-time">1:00</span>
+            </span>
+            <span class="status-pill" data-server-status data-state="ok">
+              <span class="dot"></span>
+              <span class="status-pill__text" data-i18n="tracker.server.ok">В норме</span>
+            </span>
+            <button type="button" class="tracker-filter-btn" data-open-sheet>
+              <svg style="width:16px;height:16px"><use href="#g-tracker"/></svg>
+              <span data-i18n="tracker.sheet.open">Фильтры</span>
+            </button>
+          </div>
           <div class="header__lang" role="group" aria-label="Language switcher" data-i18n-attr="aria-label:lang.switch">
             <button type="button" data-lang="ru" aria-pressed="true">RU</button>
             <button type="button" data-lang="en" aria-pressed="false">EN</button>
@@ -67,67 +99,80 @@
 
         <main>
           <section class="tracker-hero">
-            <h1 class="tracker-hero__title" data-i18n="tracker.title">Трекер</h1>
-            <p class="tracker-hero__sub" data-i18n="tracker.subtitle">Всё, что сейчас происходит в Warframe</p>
+            <div class="tracker-hero__row">
+              <h1 class="tracker-hero__title">
+                <span data-i18n="tracker.title">Трэкер</span>
+                <span class="tracker-hero__title-accent">·</span>
+                <span class="tracker-hero__sub" data-i18n="tracker.subtitle">события в игре</span>
+              </h1>
+            </div>
+            <div class="tracker-hero__divider"></div>
           </section>
 
-          <div class="tracker-settings" aria-label="Tracker settings"></div>
+          <nav class="tracker-tabs" aria-label="Tracker sections">
+            <button type="button" class="tracker-tab" data-tab="all" aria-pressed="true"><span data-i18n="tracker.tabs.all">Все события</span><span class="tracker-tab__count">0</span></button>
+            <button type="button" class="tracker-tab" data-tab="important" aria-pressed="false"><span data-i18n="tracker.tabs.important">Важные</span><span class="tracker-tab__count">0</span></button>
+            <button type="button" class="tracker-tab" data-tab="daily" aria-pressed="false"><span data-i18n="tracker.tabs.daily">Ежедневные</span><span class="tracker-tab__count">0</span></button>
+            <button type="button" class="tracker-tab" data-tab="weekly" aria-pressed="false"><span data-i18n="tracker.tabs.weekly">Еженедельные</span><span class="tracker-tab__count">0</span></button>
+            <button type="button" class="tracker-tab" data-tab="cycles" aria-pressed="false"><span data-i18n="tracker.tabs.cycles">Циклы</span><span class="tracker-tab__count">6</span></button>
+            <button type="button" class="tracker-tab" data-tab="operations" aria-pressed="false"><span data-i18n="tracker.tabs.operations">Операции</span><span class="tracker-tab__count">0</span></button>
+            <button type="button" class="tracker-tab" data-tab="traders" aria-pressed="false"><span data-i18n="tracker.tabs.traders">Торговцы</span><span class="tracker-tab__count">0</span></button>
+          </nav>
 
-          <div class="section" style="padding-top:1rem; padding-bottom:0">
+          <div class="section--tracker">
             <div class="status-banner tracker-stale" id="tracker-stale" hidden></div>
           </div>
 
-          <section class="section tracker-section" id="section-recommended">
-            <div class="section__head reveal">
-              <h2 class="section__title" data-i18n="tracker.sections.recommended">Рекомендовано вам</h2>
-            </div>
-            <div class="grid" id="recommended-grid" aria-live="polite"></div>
+          <section class="section section--tracker" id="section-recommended">
+            <div id="recommended-highlight"></div>
           </section>
 
-          <section class="section tracker-section" id="section-cycles">
+          <section class="section section--tracker" id="section-cycles">
             <div class="section__head reveal">
-              <h2 class="section__title" data-i18n="tracker.sections.cycles">Циклы планет</h2>
+              <h2 class="section__title-v2" data-i18n="tracker.sections.cycles">Циклы планет</h2>
+              <span class="section__sub" data-i18n="tracker.subtitle">синхронизация с игрой</span>
             </div>
-            <div class="cycles-grid" id="cycles-grid"></div>
+            <div class="cycles-strip" id="cycles-grid"></div>
           </section>
 
-          <section class="section tracker-section" id="section-activities">
+          <section class="section section--tracker" id="section-activities">
             <div class="section__head reveal">
-              <h2 class="section__title" data-i18n="tracker.sections.live">Активно сейчас</h2>
+              <h2 class="section__title-v2" data-i18n="tracker.sections.live">Активные ключевые задания</h2>
             </div>
-            <div class="grid" id="activities-grid"></div>
+            <div class="events-list" id="activities-grid"></div>
           </section>
 
-          <section class="section tracker-section" id="section-fissures">
+          <section class="section section--tracker" id="section-fissures">
             <div class="section__head reveal">
-              <h2 class="section__title" data-i18n="tracker.sections.fissures">Разломы Бездны</h2>
+              <h2 class="section__title-v2" data-i18n="tracker.sections.fissures">Разломы Бездны</h2>
             </div>
             <div id="fissures-wrap"></div>
           </section>
 
-          <section class="section tracker-section" id="section-live">
+          <section class="section section--tracker" id="section-live">
             <div class="section__head reveal">
-              <h2 class="section__title" data-i18n="tracker.sections.events">События</h2>
+              <h2 class="section__title-v2" data-i18n="tracker.sections.events">События</h2>
             </div>
-            <div class="grid" id="live-grid"></div>
+            <div id="live-grid"></div>
           </section>
 
-          <section class="section tracker-section" id="section-nightwave">
+          <section class="section section--tracker" id="section-nightwave">
             <div class="section__head reveal">
-              <h2 class="section__title" data-i18n="tracker.sections.nightwave">Nightwave</h2>
+              <h2 class="section__title-v2" data-i18n="tracker.sections.nightwave">Nightwave</h2>
             </div>
-            <div class="grid" id="nightwave-grid"></div>
+            <div id="nightwave-grid"></div>
           </section>
 
-          <section class="section tracker-section" id="section-traders">
+          <section class="section section--tracker" id="section-traders">
             <div class="section__head reveal">
-              <h2 class="section__title" data-i18n="tracker.sections.traders">Торговцы</h2>
+              <h2 class="section__title-v2" data-i18n="tracker.sections.traders">Торговцы</h2>
             </div>
             <div class="grid" id="traders-grid"></div>
           </section>
 
-          <footer class="footer">
-            <p data-i18n="footer.copy">© 2026 Void Warframe</p>
+          <footer class="footer section--tracker" style="text-align:center">
+            <p class="footer__quote" data-i18n="tracker.footer.quote">Помни Тенно, время — лишь ещё один ресурс</p>
+            <p data-i18n="footer.copy">© 2026 Voide Warframe — неофициальный фан-сайт.</p>
             <p style="margin-top:0.4rem">
               <span data-i18n="footer.api">Данные</span>
               <a href="https://docs.warframestat.us/" target="_blank" rel="noopener">warframestat.us</a>
@@ -137,8 +182,45 @@
           </footer>
         </main>
       </div>
+
+      <aside class="right-rail" aria-label="Filters"></aside>
     </div>
 
+    <div class="sheet" id="tracker-sheet" role="dialog" aria-modal="true"></div>
+
+    <nav class="bottom-nav" aria-label="Bottom nav">
+      <div class="bottom-nav__inner">
+        <a class="bottom-nav__item" href="../index.html">
+          <svg><use href="#g-home"/></svg>
+          <span data-i18n="bottomNav.home">Главная</span>
+        </a>
+        <a class="bottom-nav__item" href="tracker.html" aria-current="page">
+          <svg><use href="#g-tracker"/></svg>
+          <span data-i18n="bottomNav.tracker">Трэкер</span>
+        </a>
+        <a class="bottom-nav__item" href="starchart.html" data-placeholder>
+          <svg><use href="#g-map"/></svg>
+          <span data-i18n="bottomNav.map">Карта</span>
+        </a>
+        <a class="bottom-nav__item" href="builder.html" data-placeholder>
+          <svg><use href="#g-builder"/></svg>
+          <span data-i18n="bottomNav.builder">Билдер</span>
+        </a>
+        <button type="button" class="bottom-nav__item" data-action="open-sidebar">
+          <svg><use href="#g-menu"/></svg>
+          <span data-i18n="bottomNav.menu">Меню</span>
+        </button>
+      </div>
+    </nav>
+
     <script type="module" src="../assets/js/tracker.js"></script>
+    <script>
+      // Mobile bottom-nav "Menu" opens the sidebar drawer.
+      document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.querySelector('[data-action="open-sidebar"]');
+        const sb = document.querySelector('.sidebar');
+        if (btn && sb) btn.addEventListener("click", () => sb.classList.toggle("is-open"));
+      });
+    </script>
   </body>
 </html>

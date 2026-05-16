@@ -3,6 +3,7 @@ import { initI18n, setLang, getLang, onLangChange, t } from "./i18n.js";
 import { initSidebar } from "./sidebar.js";
 import { initReveal, initHeroCanvas } from "./animations.js";
 import { getWorldstate } from "./api.js";
+import { injectGlyphs } from "./glyphs.js";
 import {
   renderNews,
   renderNewsSkeletons,
@@ -80,6 +81,7 @@ function showFatal(err) {
 async function bootstrap() {
   try {
     await initI18n();
+    await injectGlyphs();
     initSidebar();
     setupLangSwitcher();
     setupSmoothCtas();

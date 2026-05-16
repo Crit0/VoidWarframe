@@ -1,4 +1,4 @@
-# Void Warframe
+# Voide Warframe
 
 Фан-сайт по игре **Warframe** с живыми данными от [api.warframestat.us](https://docs.warframestat.us/). Полностью статический — собран на чистом HTML, CSS и ES-модулях, без сборщика.
 

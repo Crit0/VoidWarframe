@@ -1,5 +1,6 @@
 import { t } from "../../i18n.js";
 import { setFissureTab } from "../settings.js";
+import { buildEventCard, buildEmpty } from "./_card.js";
 
 const TIER_NORMALIZE = {
   "lith": "lith", "meso": "meso", "neo": "neo", "axi": "axi", "requiem": "requiem",
@@ -11,25 +12,6 @@ function normalizeTier(tier) {
   return TIER_NORMALIZE[String(tier || "").toLowerCase()] || "";
 }
 
-function escapeHtml(s) {
-  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
-
-function fissureCard(f) {
-  const tier = normalizeTier(f.tier);
-  const card = document.createElement("article");
-  card.className = `alert-card alert-card--fissure${tier ? ` alert-card--fissure-${tier}` : ""}`;
-  card.innerHTML = `
-    <div class="alert-card__head">
-      <span class="alert-card__tag">${escapeHtml(f.tier || "")}${f.isStorm ? " · " + t("tracker.fissures.storm") : ""}${f.isHard ? " · " + t("tracker.fissures.hard") : ""}</span>
-      <span class="alert-card__timer" data-countdown="${f.expiry || ""}">—</span>
-    </div>
-    <h3 class="alert-card__title">${escapeHtml(f.node || "")}</h3>
-    <div class="alert-card__meta">${escapeHtml([f.missionType, f.enemy].filter(Boolean).join(" · "))}</div>
-  `;
-  return card;
-}
-
 export function renderSkeletons(container) {
   if (!container) return;
   container.innerHTML = `
@@ -37,9 +19,9 @@ export function renderSkeletons(container) {
       <button type="button" class="tabs__btn" aria-selected="true" data-tab="normal" data-i18n="tracker.fissures.normal"></button>
       <button type="button" class="tabs__btn" aria-selected="false" data-tab="steelPath" data-i18n="tracker.fissures.sp"></button>
     </div>
-    <div class="grid fissures-grid">
-      ${Array.from({ length: 6 }).map(() => `
-        <div class="skel-card">
+    <div class="events-list">
+      ${Array.from({ length: 4 }).map(() => `
+        <div class="skel-card" style="min-height:120px">
           <div class="skeleton skel-line" style="width:25%"></div>
           <div class="skeleton skel-line" style="width:70%; height:18px"></div>
           <div class="skeleton skel-line" style="width:55%"></div>
@@ -77,12 +59,22 @@ export function renderFissures(container, data, ctx) {
   });
   container.appendChild(tabs);
 
-  const grid = document.createElement("div");
-  grid.className = "grid fissures-grid";
+  const wrap = document.createElement("div");
+  wrap.className = "events-list";
   if (!list.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">${t("tracker.empty.section")}</div>`;
+    buildEmpty(wrap);
   } else {
-    list.forEach((f) => grid.appendChild(fissureCard(f)));
+    list.slice(0, 8).forEach((f) => {
+      wrap.appendChild(buildEventCard({
+        kind: "fissure",
+        tier: normalizeTier(f.tier) || f.tier,
+        title: f.node || t("tracker.sections.fissures"),
+        subtitle: [f.missionType, f.enemy, f.isStorm ? t("tracker.fissures.storm") : null].filter(Boolean).join(" · "),
+        rewards: [f.tier],
+        expiry: f.expiry,
+        activation: f.activation,
+      }));
+    });
   }
-  container.appendChild(grid);
+  container.appendChild(wrap);
 }
