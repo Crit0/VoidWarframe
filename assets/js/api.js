@@ -30,14 +30,15 @@ export async function getWorldstate(lang, { force = false } = {}) {
     return { data: cached.data, stale: false };
   }
 
+  const url = `${CONFIG.API_BASE}/${CONFIG.PLATFORM}/?language=${lang}`;
   try {
-    const url = `${CONFIG.API_BASE}/${CONFIG.PLATFORM}/?language=${lang}`;
-    const res = await fetch(url, { headers: { Accept: "application/json" } });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
     const data = await res.json();
     writeCache(lang, data);
     return { data, stale: false };
   } catch (err) {
+    console.error("[VW] worldstate fetch failed:", url, err);
     if (cached) {
       return { data: cached.data, stale: true, error: err };
     }

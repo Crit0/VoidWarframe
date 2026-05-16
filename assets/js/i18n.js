@@ -17,8 +17,9 @@ function getStoredLang() {
 }
 
 async function loadDict(lang) {
-  const res = await fetch(`assets/i18n/${lang}.json`, { cache: "no-cache" });
-  if (!res.ok) throw new Error(`i18n load failed: ${lang}`);
+  const url = new URL(`../i18n/${lang}.json`, import.meta.url);
+  const res = await fetch(url, { cache: "no-cache" });
+  if (!res.ok) throw new Error(`i18n load failed: ${lang} (HTTP ${res.status})`);
   return res.json();
 }
 

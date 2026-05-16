@@ -112,16 +112,30 @@ function showErrorBanner() {
   });
 }
 
+function showFatal(err) {
+  const el = $("#tracker-stale");
+  if (!el) return;
+  el.hidden = false;
+  el.classList.add("status-banner--error");
+  const msg = (err && err.message) || String(err);
+  el.textContent = `Ошибка инициализации / Init error: ${msg}`;
+}
+
 async function bootstrap() {
-  await initI18n();
-  initSidebar();
-  setupLangSwitcher();
-  mountSettingsStrip($(".tracker-settings"));
-  applyI18n();
-  startTicker(document);
-  initReveal();
-  onSettingsChange(() => { if (lastData) renderAll(); });
-  await loadAndRender();
+  try {
+    await initI18n();
+    initSidebar();
+    setupLangSwitcher();
+    mountSettingsStrip($(".tracker-settings"));
+    applyI18n();
+    startTicker(document);
+    initReveal();
+    onSettingsChange(() => { if (lastData) renderAll(); });
+    await loadAndRender();
+  } catch (err) {
+    console.error("[VW] tracker bootstrap failed:", err);
+    showFatal(err);
+  }
 }
 
 if (document.readyState === "loading") {

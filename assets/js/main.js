@@ -67,14 +67,29 @@ function setupSmoothCtas() {
   });
 }
 
+function showFatal(err) {
+  const banner = document.createElement("div");
+  banner.className = "status-banner status-banner--error";
+  banner.style.cssText = "max-width:1280px;margin:1.5rem auto;";
+  const msg = (err && err.message) || String(err);
+  banner.textContent = `Ошибка инициализации / Init error: ${msg}`;
+  const main = document.querySelector(".main main") || document.body;
+  main.prepend(banner);
+}
+
 async function bootstrap() {
-  await initI18n();
-  initSidebar();
-  setupLangSwitcher();
-  setupSmoothCtas();
-  initHeroCanvas();
-  initReveal();
-  loadAndRender();
+  try {
+    await initI18n();
+    initSidebar();
+    setupLangSwitcher();
+    setupSmoothCtas();
+    initHeroCanvas();
+    initReveal();
+    loadAndRender();
+  } catch (err) {
+    console.error("[VW] home bootstrap failed:", err);
+    showFatal(err);
+  }
 }
 
 if (document.readyState === "loading") {
