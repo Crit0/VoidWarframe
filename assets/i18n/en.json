@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "title": "Void Warframe — Warframe Community & Tools",
+    "description": "Warframe fan site: wiki, event tracker, mod builder, star chart. Live data from api.warframestat.us."
+  },
+  "brand": {
+    "name": "Void Warframe"
+  },
+  "nav": {
+    "home": "Home",
+    "wiki": "Wiki",
+    "tracker": "Tracker",
+    "builder": "Builder",
+    "inventory": "Mod Inventory",
+    "starchart": "Star Chart",
+    "toggle": "Toggle menu",
+    "comingSoon": "Coming soon",
+    "soon": "Soon"
+  },
+  "lang": {
+    "switch": "Switch language"
+  },
+  "hero": {
+    "eyebrow": "Tenno · Network active",
+    "title": "VOID WARFRAME",
+    "tagline": "Everything Warframe in one place: wiki, event tracker, mod builder and interactive star chart. Live data, straight from the game.",
+    "ctaPrimary": "Get started",
+    "ctaSecondary": "Open Wiki"
+  },
+  "about": {
+    "title": "About",
+    "lead": "A Tenno community, <span>powered</span> by data.",
+    "text": "Void Warframe is a fan-made companion site for Warframe. It brings together everything a player needs: a reference on frames, weapons and mods, real-time tracking of in-game events, a build planner, and an interactive Origin System map. Unofficial — not affiliated with Digital Extremes.",
+    "badges": ["Open source", "Ad-free", "Multilingual", "API powered"]
+  },
+  "features": {
+    "title": "What's on the site",
+    "sub": "Each section is already in development",
+    "wiki": {
+      "title": "Wiki",
+      "desc": "Full reference for everything: Warframes, weapons, mods, factions, locations and mechanics."
+    },
+    "tracker": {
+      "title": "Event Tracker",
+      "desc": "Active, upcoming and finished events with countdown timers and detailed info."
+    },
+    "builder": {
+      "title": "Builder",
+      "desc": "Create builds manually or with AI. Your mod and arcane inventory is saved."
+    },
+    "starchart": {
+      "title": "Star Chart",
+      "desc": "All missions, Warframe quests, Railjack, Duviri and Steel Path on a single map."
+    }
+  },
+  "news": {
+    "title": "Warframe News",
+    "sub": "Latest posts from api.warframestat.us",
+    "readMore": "Read",
+    "empty": "No news available right now."
+  },
+  "alerts": {
+    "title": "Active Events",
+    "sub": "Alerts and events happening now",
+    "alert": "Alert",
+    "event": "Event",
+    "unknown": "Untitled",
+    "empty": "No active events right now."
+  },
+  "errors": {
+    "api": "Could not load data. Check your connection.",
+    "cached": "Showing cached data — couldn't refresh.",
+    "retry": "Retry"
+  },
+  "footer": {
+    "copy": "© 2026 Void Warframe — unofficial fan site. Warframe® is a trademark of Digital Extremes Ltd.",
+    "api": "Data by",
+    "github": "GitHub"
+  }
+}
