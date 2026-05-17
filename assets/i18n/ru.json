@@ -334,11 +334,32 @@
       "primary":       "Основное",
       "secondary":     "Вторичное",
       "melee":         "Ближнее",
+      "odante":        "Оданте",
       "archwingSuit":  "Архкрыло",
       "archgun":       "Архорудие",
       "archmelee":     "Архближнее",
       "necramech":     "Некрамех",
       "other":         "Прочее"
+    },
+    "family": "Семейство модов",
+    "fam": {
+      "prime":      "Прайм",
+      "archon":     "Архонтовые",
+      "galvanized": "Гальв.",
+      "amalgam":    "Амальгама",
+      "umbra":      "Умбра",
+      "requiem":    "Реквием",
+      "augment":    "Аугмент",
+      "stance":     "Стойка",
+      "aura":       "Аура",
+      "riven":      "Ривен"
+    },
+    "sort": {
+      "label":    "Сортировка",
+      "name":     "По имени",
+      "rarity":   "По редкости",
+      "polarity": "По полярности",
+      "drain":    "По вместимости"
     },
     "pol": {
       "madurai":   "Madurai",

@@ -334,11 +334,32 @@
       "primary":       "Primary",
       "secondary":     "Secondary",
       "melee":         "Melee",
+      "odante":        "Odante",
       "archwingSuit":  "Archwing",
       "archgun":       "Arch-Gun",
       "archmelee":     "Arch-Melee",
       "necramech":     "Necramech",
       "other":         "Other"
+    },
+    "family": "Mod family",
+    "fam": {
+      "prime":      "Prime",
+      "archon":     "Archon",
+      "galvanized": "Galvanized",
+      "amalgam":    "Amalgam",
+      "umbra":      "Umbra",
+      "requiem":    "Requiem",
+      "augment":    "Augment",
+      "stance":     "Stance",
+      "aura":       "Aura",
+      "riven":      "Riven"
+    },
+    "sort": {
+      "label":    "Sort by",
+      "name":     "Name",
+      "rarity":   "Rarity",
+      "polarity": "Polarity",
+      "drain":    "Drain"
     },
     "pol": {
       "madurai":   "Madurai",

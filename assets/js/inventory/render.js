@@ -2,7 +2,7 @@ import { CONFIG } from "../config.js";
 import { t, getLang } from "../i18n.js";
 import { isOwned, toggleOwned } from "./state.js";
 import { polaritySvg, polarityColor, rarityColor, rarityLabel } from "./polarities.js";
-import { categoryOf, matchesTop } from "./categories.js";
+import { categoryOf, matchesTopSub, matchesFamilies, arcaneCategoryOf } from "./categories.js";
 
 function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -21,6 +21,11 @@ function descriptionText(mod) {
   if (!d) return "";
   if (Array.isArray(d)) return d.join(" · ");
   return String(d);
+}
+
+function statsList(mod) {
+  if (!mod.maxStats || !mod.maxStats.length) return "";
+  return `<ul class="inv-card__stats">${mod.maxStats.map((s) => `<li>${escapeHtml(s)}</li>`).join("")}</ul>`;
 }
 
 /* ============== Card builders ============== */
@@ -51,6 +56,7 @@ export function buildModCard(mod) {
         ${mod.compatName && mod.compatName !== "?" ? `<span class="inv-card__chip inv-card__chip--ghost">${escapeHtml(mod.compatName)}</span>` : ""}
         ${mod.isAugment ? `<span class="inv-card__chip inv-card__chip--accent">${escapeHtml(t("inv.tag.augment"))}</span>` : ""}
       </div>
+      ${statsList(mod)}
       ${desc ? `<p class="inv-card__desc">${escapeHtml(desc)}</p>` : ""}
     </div>
     <button type="button" class="inv-card__toggle" aria-pressed="${owned}" data-toggle>
@@ -129,24 +135,26 @@ export function buildShardCard(s) {
 
 /* ============== Filtering ============== */
 
-export function filterMods(mods, { topCategory, subCategory, search, polarity, rarity, ownedOnly }) {
+export function filterMods(mods, { topCategory, subCategory, search, polarity, rarity, families, ownedOnly }) {
   const q = (search || "").trim().toLowerCase();
   return mods.filter((m) => {
     if (q && !(m.name || "").toLowerCase().includes(q)) return false;
     const cat = categoryOf(m);
-    if (subCategory && cat !== subCategory) return false;
-    else if (topCategory && !matchesTop(cat, topCategory)) return false;
+    if (!matchesTopSub(cat, topCategory, subCategory)) return false;
     if (polarity && polarity !== "all" && m.polarity !== polarity) return false;
     if (rarity   && rarity !== "all" && (m.rarity || "").toLowerCase() !== rarity.toLowerCase()) return false;
+    if (!matchesFamilies(m, families)) return false;
     if (ownedOnly && !isOwned("mods", m.uniqueName)) return false;
     return true;
   });
 }
 
-export function filterArcanes(arcanes, { search, ownedOnly }) {
+export function filterArcanes(arcanes, { topCategory, subCategory, search, ownedOnly }) {
   const q = (search || "").trim().toLowerCase();
   return arcanes.filter((a) => {
     if (q && !(a.name || "").toLowerCase().includes(q)) return false;
+    const cat = arcaneCategoryOf(a);
+    if (!matchesTopSub(cat, topCategory, subCategory)) return false;
     if (ownedOnly && !isOwned("arcanes", a.name)) return false;
     return true;
   });
@@ -164,24 +172,84 @@ export function filterShards(shards, { search, color, tauforged, ownedOnly }) {
   });
 }
 
-/* ============== Grid renderers ============== */
+/* ============== Sorting ============== */
 
-export function renderGrid(container, items, builder, { limit = 60 } = {}) {
+const RARITY_ORDER = { common: 0, uncommon: 1, rare: 2, legendary: 3, "обычный": 0, "необычный": 1, "редкий": 2, "легендарный": 3 };
+const POLARITY_ORDER = { madurai: 0, naramon: 1, vazarin: 2, zenurik: 3, penjaga: 4, unairu: 5, umbra: 6, aura: 7, universal: 8, "": 99, "?": 99 };
+const SHARD_COLOR_ORDER = { crimson: 0, amber: 1, azure: 2, violet: 3, emerald: 4, topaz: 5 };
+
+export function sortItems(items, sort, kind) {
+  if (!sort || !sort.key) return items;
+  const k = sort.key, d = sort.dir === "desc" ? -1 : 1;
+  return [...items].sort((a, b) => {
+    let av, bv;
+    if (k === "name") {
+      av = (a.name || "").toLowerCase();
+      bv = (b.name || "").toLowerCase();
+    } else if (k === "rarity") {
+      av = RARITY_ORDER[(a.rarity || "").toLowerCase()] ?? 99;
+      bv = RARITY_ORDER[(b.rarity || "").toLowerCase()] ?? 99;
+    } else if (k === "polarity") {
+      av = POLARITY_ORDER[a.polarity || ""] ?? 99;
+      bv = POLARITY_ORDER[b.polarity || ""] ?? 99;
+    } else if (k === "drain") {
+      av = a.baseDrain ?? -1;
+      bv = b.baseDrain ?? -1;
+    } else if (k === "color" && kind === "shards") {
+      av = SHARD_COLOR_ORDER[a.color] ?? 99;
+      bv = SHARD_COLOR_ORDER[b.color] ?? 99;
+    } else if (k === "tauforged" && kind === "shards") {
+      av = a.tauforged ? 1 : 0;
+      bv = b.tauforged ? 1 : 0;
+    } else {
+      return 0;
+    }
+    if (av < bv) return -1 * d;
+    if (av > bv) return  1 * d;
+    return (a.name || "").localeCompare(b.name || "");
+  });
+}
+
+/* ============== Grid + pager ============== */
+
+export function renderGrid(container, items, builder, { page = 1, perPage = 60 } = {}) {
   container.innerHTML = "";
   if (!items.length) {
     container.innerHTML = `<div class="empty-state" style="grid-column:1/-1">${escapeHtml(t("inv.empty"))}</div>`;
     return;
   }
+  const start = (page - 1) * perPage;
+  const slice = items.slice(start, start + perPage);
   const frag = document.createDocumentFragment();
-  items.slice(0, limit).forEach((it) => frag.appendChild(builder(it)));
+  slice.forEach((it) => frag.appendChild(builder(it)));
   container.appendChild(frag);
-  if (items.length > limit) {
-    const more = document.createElement("div");
-    more.className = "inv-more";
-    more.style.gridColumn = "1/-1";
-    more.textContent = t("inv.more", { n: items.length - limit });
-    container.appendChild(more);
+}
+
+export function renderPager(container, total, page, perPage, onPage) {
+  const pages = Math.max(1, Math.ceil(total / perPage));
+  if (pages <= 1) { container.innerHTML = ""; return; }
+  const items = [];
+  const add = (label, target, current = false, disabled = false) => items.push({ label, target, current, disabled });
+
+  add("‹", Math.max(1, page - 1), false, page === 1);
+
+  const show = new Set([1, pages, page - 1, page, page + 1]);
+  let prev = 0;
+  for (let i = 1; i <= pages; i++) {
+    if (!show.has(i)) continue;
+    if (i - prev > 1) items.push({ label: "…", target: 0, current: false, disabled: true });
+    add(String(i), i, i === page, false);
+    prev = i;
   }
+
+  add("›", Math.min(pages, page + 1), false, page === pages);
+
+  container.innerHTML = items.map((it) =>
+    `<button type="button" class="inv-pager__btn${it.current ? " is-current" : ""}" ${it.disabled ? "disabled" : `data-page="${it.target}"`}>${escapeHtml(it.label)}</button>`
+  ).join("");
+
+  container.querySelectorAll("[data-page]").forEach((b) =>
+    b.addEventListener("click", () => onPage(Number(b.dataset.page))));
 }
 
 /* ============== Click delegation ============== */

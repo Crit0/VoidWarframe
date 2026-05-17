@@ -5,7 +5,7 @@ import { CONFIG } from "../config.js";
    Shards are a small static list (color × stat-slot configuration). */
 
 const MODS_TTL_MS  = 7 * 24 * 3600 * 1000;
-const VERSION = 1;
+const VERSION = 2;  // bumped: mods now have maxStats, no levelStats
 const memCache = new Map();
 const inflight = new Map();
 
@@ -27,7 +27,7 @@ function writeCache(kind, lang, data) {
   } catch (e) { console.warn(`[VW] ${kind} cache write failed:`, e.message); }
 }
 
-async function fetchOnce(kind, url, lang) {
+async function fetchOnce(kind, url, lang, transform) {
   const memKey = `${kind}_${lang}`;
   if (memCache.has(memKey)) return memCache.get(memKey);
   if (inflight.has(memKey)) return inflight.get(memKey);
@@ -40,7 +40,8 @@ async function fetchOnce(kind, url, lang) {
       const res = await fetch(url);
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      const arr = Array.isArray(data) ? data : [];
+      let arr = Array.isArray(data) ? data : [];
+      if (typeof transform === "function") arr = arr.map(transform);
       writeCache(kind, lang, arr);
       memCache.set(memKey, arr);
       return arr;
@@ -57,8 +58,28 @@ async function fetchOnce(kind, url, lang) {
 }
 
 export function getMods(lang) {
-  const url = `${CONFIG.API_BASE}/mods?language=${lang}&only=name,uniqueName,imageName,description,polarity,baseDrain,fusionLimit,type,rarity,compatName,isAugment`;
-  return fetchOnce("mods", url, lang);
+  const url = `${CONFIG.API_BASE}/mods?language=${lang}&only=name,uniqueName,imageName,description,polarity,baseDrain,fusionLimit,type,rarity,compatName,isAugment,levelStats`;
+  return fetchOnce("mods", url, lang, slimMod);
+}
+
+function slimMod(m) {
+  const ls = Array.isArray(m.levelStats) && m.levelStats.length
+    ? (m.levelStats[m.levelStats.length - 1].stats || [])
+    : [];
+  return {
+    name: m.name,
+    uniqueName: m.uniqueName,
+    imageName: m.imageName,
+    description: m.description,
+    polarity: m.polarity,
+    baseDrain: m.baseDrain,
+    fusionLimit: m.fusionLimit,
+    type: m.type,
+    rarity: m.rarity,
+    compatName: m.compatName,
+    isAugment: m.isAugment,
+    maxStats: ls,
+  };
 }
 
 export function getArcanes(lang) {

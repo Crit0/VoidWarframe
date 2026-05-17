@@ -5,14 +5,16 @@ import { getMods, getArcanes, getShards } from "./inventory/data.js";
 import {
   buildModCard, buildArcaneCard, buildShardCard,
   filterMods, filterArcanes, filterShards,
-  renderGrid, attachToggleHandler,
+  sortItems, renderGrid, renderPager, attachToggleHandler,
 } from "./inventory/render.js";
+import { SUBCATEGORIES_BY_TOP } from "./inventory/categories.js";
 import { onInventoryChange, countOwned, clearKind } from "./inventory/state.js";
 
-const $ = (sel) => document.querySelector(sel);
+const $  = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-const FILTERS_KEY = "vw_inv_filters_v1";
+const FILTERS_KEY = "vw_inv_filters_v2";
+const PER_PAGE = 60;
 
 const filters = loadFilters();
 
@@ -25,15 +27,18 @@ function loadFilters() {
 }
 function defaults() {
   return {
-    kind: "mods",            // mods | arcanes | shards
-    topCategory: "all",       // all | weapons | warframe | archwing | companion | other
-    subCategory: "",          // primary | secondary | melee | archwing | archgun | archmelee | necramech | other
+    kind: "mods",
+    topCategory: "all",
+    subCategory: "",
     search: "",
     polarity: "all",
     rarity: "all",
+    families: [],         // Array<string> — chosen mod families
     color: "all",
     tauforged: "all",
     ownedOnly: false,
+    sort: { key: "name", dir: "asc" },
+    page: 1,
   };
 }
 function saveFilters() {
@@ -51,25 +56,46 @@ async function loadData(lang) {
   rerender();
 }
 
-function rerender() {
-  const grid = $("#inv-grid");
-  applyKindUiVisibility();
-
+function currentFiltered() {
   if (filters.kind === "mods") {
-    const filtered = filterMods(data.mods, filters);
-    renderGrid(grid, filtered, buildModCard);
-    setCount(filtered.length, data.mods.length);
-  } else if (filters.kind === "arcanes") {
-    const filtered = filterArcanes(data.arcanes, filters);
-    renderGrid(grid, filtered, buildArcaneCard);
-    setCount(filtered.length, data.arcanes.length);
-  } else if (filters.kind === "shards") {
-    const filtered = filterShards(data.shards, filters);
-    renderGrid(grid, filtered, buildShardCard);
-    setCount(filtered.length, data.shards.length);
+    return sortItems(filterMods(data.mods, filters), filters.sort, "mods");
   }
+  if (filters.kind === "arcanes") {
+    return sortItems(filterArcanes(data.arcanes, filters), filters.sort, "arcanes");
+  }
+  return sortItems(filterShards(data.shards, filters), filters.sort, "shards");
+}
+
+function rerender() {
+  applyKindUiVisibility();
+  applySubCategoryUiVisibility();
+
+  const items = currentFiltered();
+  // Clamp page
+  const totalPages = Math.max(1, Math.ceil(items.length / PER_PAGE));
+  if (filters.page > totalPages) filters.page = totalPages;
+  if (filters.page < 1) filters.page = 1;
+
+  const grid = $("#inv-grid");
+  const builder = filters.kind === "mods" ? buildModCard
+                : filters.kind === "arcanes" ? buildArcaneCard
+                : buildShardCard;
+  renderGrid(grid, items, builder, { page: filters.page, perPage: PER_PAGE });
+
+  renderPager($("#inv-pager"), items.length, filters.page, PER_PAGE, (p) => {
+    filters.page = p;
+    saveFilters();
+    rerender();
+    grid.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  setCount(items.length, totalCount());
   updateOwnedCounts();
   applyI18n();
+}
+
+function totalCount() {
+  return data[filters.kind] ? data[filters.kind].length : 0;
 }
 
 function setCount(n, total) {
@@ -78,20 +104,34 @@ function setCount(n, total) {
 }
 
 function applyKindUiVisibility() {
-  // Sub-tabs and filter chips that differ between kinds
-  const showCategories = filters.kind === "mods";
+  const showCategories = filters.kind === "mods" || filters.kind === "arcanes";
   const showPolarity   = filters.kind === "mods";
   const showRarity     = filters.kind === "mods";
+  const showFamilies   = filters.kind === "mods";
   const showColor      = filters.kind === "shards";
   const showTauforged  = filters.kind === "shards";
+  const showSortDrain  = filters.kind === "mods";
+  const showSortPolarity = filters.kind === "mods";
 
-  $("#inv-categories").hidden = !showCategories;
-  $("#inv-sub-categories").hidden = !showCategories || filters.topCategory === "all" || filters.topCategory === "warframe" || filters.topCategory === "companion";
+  $("#group-categories").hidden = !showCategories;
+  $("#group-polarity").hidden = !showPolarity;
+  $("#group-rarity").hidden = !showRarity;
+  $("#group-families").hidden = !showFamilies;
+  $("#group-color").hidden = !showColor;
+  $("#group-tauforged").hidden = !showTauforged;
+  $("#sort-drain").hidden = !showSortDrain;
+  $("#sort-polarity").hidden = !showSortPolarity;
 
-  $("#filter-polarity-group").hidden = !showPolarity;
-  $("#filter-rarity-group").hidden = !showRarity;
-  $("#filter-color-group").hidden = !showColor;
-  $("#filter-tauforged-group").hidden = !showTauforged;
+  // Arcane categories — hide "companion" for arcanes
+  $$("[data-top='companion']").forEach((b) => b.hidden = filters.kind === "arcanes");
+}
+
+function applySubCategoryUiVisibility() {
+  const subs = SUBCATEGORIES_BY_TOP[filters.topCategory] || [];
+  $("#group-subcategories").hidden = subs.length === 0;
+  $$("[data-sub]").forEach((b) => {
+    b.hidden = !subs.includes(b.dataset.sub);
+  });
 }
 
 function updateOwnedCounts() {
@@ -101,19 +141,24 @@ function updateOwnedCounts() {
 }
 
 function syncUi() {
-  // Kind tabs
   $$("[data-kind]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.kind === filters.kind)));
-  // Top categories
   $$("[data-top]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.top === filters.topCategory)));
   $$("[data-sub]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.sub === filters.subCategory)));
-  // Filters
   $$("[data-polarity]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.polarity === filters.polarity)));
   $$("[data-rarity]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.rarity === filters.rarity)));
+  $$("[data-family]").forEach((b) => b.setAttribute("aria-pressed", String(filters.families.includes(b.dataset.family))));
   $$("[data-color]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.color === filters.color)));
   $$("[data-tauforged]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.tauforged === filters.tauforged)));
+  $$("[data-sort-key]").forEach((b) => {
+    const active = b.dataset.sortKey === filters.sort.key;
+    b.setAttribute("aria-pressed", String(active));
+    b.dataset.dir = active ? filters.sort.dir : "asc";
+  });
   $("#inv-owned-only").checked = filters.ownedOnly;
   $("#inv-search").value = filters.search;
 }
+
+function resetPage() { filters.page = 1; }
 
 function setupHandlers() {
   const root = $("#inventory-root");
@@ -125,21 +170,37 @@ function setupHandlers() {
     if (b.dataset.kind) {
       filters.kind = b.dataset.kind;
       filters.subCategory = "";
-      saveFilters(); syncUi(); rerender(); return;
+      resetPage(); saveFilters(); syncUi(); rerender(); return;
     }
     if (b.dataset.top) {
       filters.topCategory = b.dataset.top;
       filters.subCategory = "";
-      saveFilters(); syncUi(); rerender(); return;
+      resetPage(); saveFilters(); syncUi(); rerender(); return;
     }
     if (b.dataset.sub !== undefined) {
       filters.subCategory = filters.subCategory === b.dataset.sub ? "" : b.dataset.sub;
+      resetPage(); saveFilters(); syncUi(); rerender(); return;
+    }
+    if (b.dataset.polarity) { filters.polarity = b.dataset.polarity; resetPage(); saveFilters(); syncUi(); rerender(); return; }
+    if (b.dataset.rarity)   { filters.rarity   = b.dataset.rarity;   resetPage(); saveFilters(); syncUi(); rerender(); return; }
+    if (b.dataset.family)   {
+      const set = new Set(filters.families);
+      if (set.has(b.dataset.family)) set.delete(b.dataset.family);
+      else set.add(b.dataset.family);
+      filters.families = Array.from(set);
+      resetPage(); saveFilters(); syncUi(); rerender(); return;
+    }
+    if (b.dataset.color)    { filters.color = b.dataset.color; resetPage(); saveFilters(); syncUi(); rerender(); return; }
+    if (b.dataset.tauforged){ filters.tauforged = b.dataset.tauforged; resetPage(); saveFilters(); syncUi(); rerender(); return; }
+    if (b.dataset.sortKey)  {
+      if (filters.sort.key === b.dataset.sortKey) {
+        filters.sort.dir = filters.sort.dir === "asc" ? "desc" : "asc";
+      } else {
+        filters.sort.key = b.dataset.sortKey;
+        filters.sort.dir = "asc";
+      }
       saveFilters(); syncUi(); rerender(); return;
     }
-    if (b.dataset.polarity) { filters.polarity = b.dataset.polarity; saveFilters(); syncUi(); rerender(); return; }
-    if (b.dataset.rarity)   { filters.rarity   = b.dataset.rarity;   saveFilters(); syncUi(); rerender(); return; }
-    if (b.dataset.color)    { filters.color    = b.dataset.color;    saveFilters(); syncUi(); rerender(); return; }
-    if (b.dataset.tauforged){ filters.tauforged= b.dataset.tauforged;saveFilters(); syncUi(); rerender(); return; }
 
     if (b.dataset.action === "reset") {
       const def = defaults();
@@ -163,13 +224,13 @@ function setupHandlers() {
     clearTimeout(st);
     st = setTimeout(() => {
       filters.search = e.target.value;
-      saveFilters(); rerender();
-    }, 150);
+      resetPage(); saveFilters(); rerender();
+    }, 180);
   });
 
   $("#inv-owned-only").addEventListener("change", (e) => {
     filters.ownedOnly = e.target.checked;
-    saveFilters(); rerender();
+    resetPage(); saveFilters(); rerender();
   });
 
   attachToggleHandler(root);
