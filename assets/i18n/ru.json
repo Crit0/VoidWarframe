@@ -83,19 +83,23 @@
     "title": "Трекер",
     "subtitle": "Всё, что сейчас происходит в Warframe — в вашем часовом поясе",
     "settings": {
-      "budget": "Сколько у меня времени",
-      "recommend": "Рекомендации",
+      "budget": {
+        "label": "Сколько у меня времени",
+        "15m": "15 мин",
+        "30m": "30 мин",
+        "1h": "1 ч",
+        "2h": "2 ч",
+        "4h": "4 ч",
+        "inf": "Без лимита"
+      },
+      "recommend": {
+        "label": "Рекомендации",
+        "on": "Включить",
+        "valuable": "Ценный дроп",
+        "fits": "Подходит по времени"
+      },
       "filters": "Фильтры",
-      "reset": "Сброс",
-      "budget.15m": "15 мин",
-      "budget.30m": "30 мин",
-      "budget.1h": "1 ч",
-      "budget.2h": "2 ч",
-      "budget.4h": "4 ч",
-      "budget.inf": "Без лимита",
-      "recommend.on": "Включить",
-      "recommend.valuable": "Ценный дроп",
-      "recommend.fits": "Подходит по времени"
+      "reset": "Сброс"
     },
     "filters": {
       "cycles": "Циклы",
@@ -131,27 +135,13 @@
       "live": "Активно сейчас"
     },
     "cycles": {
-      "earth.label": "Земля",
-      "earth.day": "День",
-      "earth.night": "Ночь",
-      "cetus.label": "Цетус",
-      "cetus.day": "День",
-      "cetus.night": "Ночь",
-      "vallis.label": "Орб Венеры",
-      "vallis.warm": "Тепло",
-      "vallis.cold": "Холод",
-      "cambion.label": "Камбион Дрифт",
-      "cambion.fass": "Фасс",
-      "cambion.vome": "Воме",
-      "duviri.label": "Дуивири",
-      "duviri.joy": "Радость",
-      "duviri.anger": "Гнев",
-      "duviri.sorrow": "Печаль",
-      "duviri.fear": "Страх",
-      "duviri.envy": "Зависть",
-      "zariman.label": "Заримам",
-      "zariman.corpus": "Корпус",
-      "zariman.grineer": "Гринир"
+      "earth":   { "label": "Земля",      "day": "День",      "night": "Ночь" },
+      "cetus":   { "label": "Цетус",      "day": "День",      "night": "Ночь" },
+      "vallis":  { "label": "Орб Венеры", "warm": "Тепло",    "cold": "Холод" },
+      "cambion": { "label": "Камбион Дрифт", "fass": "Фасс",  "vome": "Воме" },
+      "duviri":  { "label": "Дуивири", "joy": "Радость", "anger": "Гнев",
+                   "sorrow": "Печаль", "fear": "Страх", "envy": "Зависть" },
+      "zariman": { "label": "Заримам", "corpus": "Корпус", "grineer": "Гринир" }
     },
     "time": {
       "endsAt": "до {time} ({left})",
@@ -184,6 +174,8 @@
       "away": "Отсутствует",
       "here": "На месте",
       "ducats": "дк",
+      "aya": "Aya",
+      "regalAya": "Regal Aya",
       "credits": "кр",
       "discount": "Скидка",
       "stock": "Осталось",

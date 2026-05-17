@@ -1,7 +1,8 @@
 export const CONFIG = {
   API_BASE: "https://api.warframestat.us",
   PLATFORM: "pc",
-  CACHE_TTL_MS: 60 * 1000,
+  CACHE_TTL_MS: 90 * 1000,
+  ITEMS_TTL_MS: 7 * 24 * 3600 * 1000,
   DEFAULT_LANG: "ru",
   SUPPORTED_LANGS: ["ru", "en"],
   STORAGE_KEY: "vw_lang",

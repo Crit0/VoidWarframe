@@ -1,5 +1,6 @@
 import { t } from "../../i18n.js";
 import { buildEventCard, buildEmpty } from "./_card.js";
+import { translateFaction } from "../labels.js";
 
 const SPECIAL_TAGS = new Set([
   "TennoCon", "TennoCon2024", "TennoCon2025", "TennoCon2026",
@@ -20,7 +21,7 @@ function entryFromAlert(a) {
   return {
     kind: "alert",
     title: [m.type, m.node].filter(Boolean).join(" · ") || t("alerts.unknown"),
-    subtitle: m.faction || "",
+    subtitle: translateFaction(m.faction || ""),
     rewards: [m.reward?.asString].filter(Boolean),
     expiry: a.expiry,
     activation: a.activation,
@@ -33,7 +34,7 @@ function entryFromInvasion(inv) {
   return {
     kind: "invasion",
     title: inv.node || t("tracker.sections.invasions"),
-    subtitle: `${inv.attackingFaction || ""} ↔ ${inv.defendingFaction || ""}`,
+    subtitle: `${translateFaction(inv.attackingFaction || "")} ↔ ${translateFaction(inv.defendingFaction || "")}`,
     rewards: [r1, r2].filter(Boolean),
     activation: inv.activation,
   };

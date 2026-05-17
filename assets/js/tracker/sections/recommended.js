@@ -2,14 +2,15 @@ import { CONFIG } from "../../config.js";
 import { t } from "../../i18n.js";
 import { estimateDurationMin, isValuableReward, isRecommended, scoreEntry } from "../recommend.js";
 import { buildEventCard, buildEmpty, escapeHtml } from "./_card.js";
+import { translatePool, translateFaction } from "../labels.js";
 
 function entryFromSortie(s) {
   if (!s || s.expired) return null;
   return {
     kind: "sortie",
     title: s.boss || t("tracker.sections.sortie"),
-    subtitle: s.faction || "",
-    rewards: [s.rewardPool].filter(Boolean),
+    subtitle: translateFaction(s.faction || ""),
+    rewards: [translatePool(s.rewardPool)].filter(Boolean),
     expiry: s.expiry,
     activation: s.activation,
     durationMin: estimateDurationMin(s, { kind: "sortie" }),
@@ -23,8 +24,8 @@ function entryFromArchon(a) {
   return {
     kind: "archonHunt",
     title: a.boss || t("tracker.sections.archon"),
-    subtitle: a.faction || "",
-    rewards: [a.rewardPool || "Archon Shard"],
+    subtitle: translateFaction(a.faction || ""),
+    rewards: [translatePool(a.rewardPool) || "Archon Shard"],
     expiry: a.expiry,
     activation: a.activation,
     durationMin: estimateDurationMin(a, { kind: "archonHunt" }),
@@ -151,7 +152,8 @@ export function renderHighlight(container, data, ctx) {
         <span class="recommend-highlight__icon"><svg><use href="#g-clock"/></svg></span>
         <div>
           <div class="recommend-highlight__label">${escapeHtml(t("tracker.recommend.highlight.label"))}</div>
-          <div class="recommend-highlight__title">${escapeHtml(t("tracker.recommend.none"))}</div>
+          <h3 class="recommend-highlight__title">—</h3>
+          <p class="recommend-highlight__meta" style="white-space:normal; max-width: 60ch">${escapeHtml(t("tracker.recommend.none"))}</p>
         </div>
         <span></span>
       </div>

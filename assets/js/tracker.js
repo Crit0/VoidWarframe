@@ -1,6 +1,7 @@
 import { CONFIG } from "./config.js";
 import { initI18n, applyI18n, setLang, getLang, onLangChange, t } from "./i18n.js";
 import { getWorldstate } from "./api.js";
+import { getItemsDict } from "./items.js";
 import { initSidebar } from "./sidebar.js";
 import { initReveal } from "./animations.js";
 import { injectGlyphs } from "./glyphs.js";
@@ -19,11 +20,27 @@ import * as Recommended from "./tracker/sections/recommended.js";
 
 let lastData = null;
 let lastStatus = "ok"; // ok | stale | error
+let itemsDict = null;
 
 const $ = (sel) => document.querySelector(sel);
 
 function ctxNow() {
-  return { lang: getLang(), settings: getSettings(), status: lastStatus };
+  return { lang: getLang(), settings: getSettings(), status: lastStatus, items: itemsDict };
+}
+
+function prefetchItems() {
+  const lang = getLang();
+  const start = () => {
+    getItemsDict(lang).then((d) => {
+      itemsDict = d;
+      if (lastData) renderAll();
+    }).catch((e) => console.warn("[VW] items prefetch:", e));
+  };
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(start, { timeout: 4000 });
+  } else {
+    setTimeout(start, 1200);
+  }
 }
 
 function setupLangSwitcher() {
@@ -32,7 +49,9 @@ function setupLangSwitcher() {
       const lang = b.dataset.lang;
       if (lang === getLang()) return;
       await setLang(lang);
+      itemsDict = null;
       await loadAndRender(true);
+      prefetchItems();
     });
   });
   const sync = (lang) => {
@@ -186,8 +205,13 @@ async function bootstrap() {
     startTicker(document);
     initReveal();
     setupRefreshUi();
-    onSettingsChange(() => { if (lastData) renderAll(); });
+    let renderDebounce;
+    onSettingsChange(() => {
+      clearTimeout(renderDebounce);
+      renderDebounce = setTimeout(() => { if (lastData) renderAll(); }, 50);
+    });
     await loadAndRender();
+    prefetchItems();
   } catch (err) {
     console.error("[VW] tracker bootstrap failed:", err);
     showFatal(err);

@@ -83,19 +83,23 @@
     "title": "Tracker",
     "subtitle": "Everything happening in Warframe right now — in your local timezone",
     "settings": {
-      "budget": "How much time?",
-      "recommend": "Recommendations",
+      "budget": {
+        "label": "How much time?",
+        "15m": "15 min",
+        "30m": "30 min",
+        "1h": "1 h",
+        "2h": "2 h",
+        "4h": "4 h",
+        "inf": "No limit"
+      },
+      "recommend": {
+        "label": "Recommendations",
+        "on": "Enabled",
+        "valuable": "Valuable drop",
+        "fits": "Fits time"
+      },
       "filters": "Filters",
-      "reset": "Reset",
-      "budget.15m": "15 min",
-      "budget.30m": "30 min",
-      "budget.1h": "1 h",
-      "budget.2h": "2 h",
-      "budget.4h": "4 h",
-      "budget.inf": "No limit",
-      "recommend.on": "Enabled",
-      "recommend.valuable": "Valuable drop",
-      "recommend.fits": "Fits time"
+      "reset": "Reset"
     },
     "filters": {
       "cycles": "Cycles",
@@ -131,27 +135,13 @@
       "live": "Live now"
     },
     "cycles": {
-      "earth.label": "Earth",
-      "earth.day": "Day",
-      "earth.night": "Night",
-      "cetus.label": "Cetus",
-      "cetus.day": "Day",
-      "cetus.night": "Night",
-      "vallis.label": "Orb Vallis",
-      "vallis.warm": "Warm",
-      "vallis.cold": "Cold",
-      "cambion.label": "Cambion Drift",
-      "cambion.fass": "Fass",
-      "cambion.vome": "Vome",
-      "duviri.label": "Duviri",
-      "duviri.joy": "Joy",
-      "duviri.anger": "Anger",
-      "duviri.sorrow": "Sorrow",
-      "duviri.fear": "Fear",
-      "duviri.envy": "Envy",
-      "zariman.label": "Zariman",
-      "zariman.corpus": "Corpus",
-      "zariman.grineer": "Grineer"
+      "earth":   { "label": "Earth",       "day": "Day",  "night": "Night" },
+      "cetus":   { "label": "Cetus",       "day": "Day",  "night": "Night" },
+      "vallis":  { "label": "Orb Vallis",  "warm": "Warm", "cold": "Cold" },
+      "cambion": { "label": "Cambion Drift", "fass": "Fass", "vome": "Vome" },
+      "duviri":  { "label": "Duviri", "joy": "Joy", "anger": "Anger",
+                   "sorrow": "Sorrow", "fear": "Fear", "envy": "Envy" },
+      "zariman": { "label": "Zariman", "corpus": "Corpus", "grineer": "Grineer" }
     },
     "time": {
       "endsAt": "until {time} ({left})",
@@ -184,6 +174,8 @@
       "away": "Away",
       "here": "Here now",
       "ducats": "duc",
+      "aya": "Aya",
+      "regalAya": "Regal Aya",
       "credits": "cr",
       "discount": "Discount",
       "stock": "Stock",

@@ -1,5 +1,6 @@
 import { t } from "../../i18n.js";
 import { buildEventCard, buildEmpty, buildSkeletons } from "./_card.js";
+import { translatePool, translateFaction } from "../labels.js";
 
 function variantsOf(item) {
   return (item.variants || item.missions || []).map((v) => ({
@@ -29,8 +30,8 @@ export function renderActivities(container, data, ctx) {
     push({
       kind: "sortie",
       title: data.sortie.boss || t("tracker.sections.sortie"),
-      subtitle: data.sortie.faction || "",
-      rewards: asRewards(data.sortie.rewardPool),
+      subtitle: translateFaction(data.sortie.faction || ""),
+      rewards: asRewards(translatePool(data.sortie.rewardPool)),
       variants: variantsOf(data.sortie),
       expiry: data.sortie.expiry,
       activation: data.sortie.activation,
@@ -41,8 +42,8 @@ export function renderActivities(container, data, ctx) {
     push({
       kind: "archonHunt",
       title: data.archonHunt.boss || t("tracker.sections.archon"),
-      subtitle: data.archonHunt.faction || "",
-      rewards: asRewards(data.archonHunt.rewardPool || "Archon Shard"),
+      subtitle: translateFaction(data.archonHunt.faction || ""),
+      rewards: asRewards(translatePool(data.archonHunt.rewardPool) || "Archon Shard"),
       variants: variantsOf(data.archonHunt),
       expiry: data.archonHunt.expiry,
       activation: data.archonHunt.activation,

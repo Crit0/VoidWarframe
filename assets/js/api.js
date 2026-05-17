@@ -23,6 +23,8 @@ function writeCache(lang, data) {
   } catch {}
 }
 
+let inflightCtrl = null;
+
 export async function getWorldstate(lang, { force = false } = {}) {
   const cached = readCache(lang);
   const fresh = cached && Date.now() - cached.ts < CONFIG.CACHE_TTL_MS;
@@ -30,14 +32,20 @@ export async function getWorldstate(lang, { force = false } = {}) {
     return { data: cached.data, stale: false };
   }
 
+  if (inflightCtrl) inflightCtrl.abort();
+  inflightCtrl = new AbortController();
+  const signal = inflightCtrl.signal;
+
   const url = `${CONFIG.API_BASE}/${CONFIG.PLATFORM}/?language=${lang}`;
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { signal });
     if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
     const data = await res.json();
     writeCache(lang, data);
+    inflightCtrl = null;
     return { data, stale: false };
   } catch (err) {
+    if (err.name === "AbortError") throw err;
     console.error("[VW] worldstate fetch failed:", url, err);
     if (cached) {
       return { data: cached.data, stale: true, error: err };
