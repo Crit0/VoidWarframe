@@ -84,17 +84,36 @@ function renderBaroVarzia(container, raw, { kind, name, glyphId, costLabelKey },
     ? `<span class="trader-card__timer" data-expiry-phrase="${raw.expiry || ""}">—</span>`
     : `<span class="trader-card__timer">${t("tracker.traders.arrives")} <span data-countdown="${raw.activation || ""}">—</span></span>`;
 
-  const primaryLabel = t(costLabelKey || "tracker.traders.ducats");
+  const PACK_RE = /\b(pack|bundle|set\s+pack|single\s+pack|dual\s+pack|пакет|сет|набор|комплект)\b/i;
+  const isVarzia = kind === "varzia";
   const costsHtml = (row) => {
     const parts = [];
-    if (row.ducats != null) parts.push(`<span class="trader-card__cost trader-card__cost--ducats">${row.ducats} ${primaryLabel}</span>`);
-    if (row.regalAya != null) parts.push(`<span class="trader-card__cost trader-card__cost--ducats">${row.regalAya} ${t("tracker.traders.regalAya")}</span>`);
-    if (row.credits != null) parts.push(`<span class="trader-card__cost trader-card__cost--credits">${Number(row.credits).toLocaleString()} ${t("tracker.traders.credits")}</span>`);
+    if (row.regalAya != null) {
+      parts.push(`<span class="trader-card__cost trader-card__cost--regal">${row.regalAya} ${t("tracker.traders.regalAya")}</span>`);
+    }
+    if (row.ducats != null) {
+      let label = t(costLabelKey || "tracker.traders.ducats");
+      let cls = "trader-card__cost--ducats";
+      if (isVarzia) {
+        if (PACK_RE.test(row.item || "")) {
+          label = t("tracker.traders.regalAya");
+          cls = "trader-card__cost--regal";
+        }
+      }
+      parts.push(`<span class="trader-card__cost ${cls}">${row.ducats} ${label}</span>`);
+    }
+    if (row.credits != null) {
+      parts.push(`<span class="trader-card__cost trader-card__cost--credits">${Number(row.credits).toLocaleString()} ${t("tracker.traders.credits")}</span>`);
+    }
     return parts.join("");
   };
 
+  const rotationHint = (isHere && kind === "varzia")
+    ? `<p class="trader-card__hint" style="margin-top:0.6rem">${escapeHtml(t("tracker.traders.varziaHint"))}</p>`
+    : "";
+
   const bodyHtml = isHere
-    ? inventoryListHtml(inventory, items, costsHtml)
+    ? `${inventoryListHtml(inventory, items, costsHtml)}${rotationHint}`
     : `<p class="trader-card__hint">${escapeHtml(t("tracker.traders.arrivesAt"))} ${raw.activation ? new Date(raw.activation).toLocaleString() : "—"}</p>`;
 
   container.appendChild(traderShell({

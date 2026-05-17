@@ -1,6 +1,10 @@
 import { t } from "../../i18n.js";
 import { statusOf, statusLabel, typeLabel, artClassOf, typeClassOf, glyphOf } from "../categorize.js";
 
+export const entryById = new Map();
+let entrySeq = 0;
+export function resetEntryRegistry() { entryById.clear(); entrySeq = 0; }
+
 function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
@@ -38,10 +42,16 @@ export function buildEventCard(entry) {
     .map((r) => `<span class="event-card__reward-chip event-card__reward-chip--gold">${escapeHtml(r)}</span>`)
     .join("");
 
+  const id = `e${++entrySeq}`;
+  entryById.set(id, entry);
+
   const card = document.createElement("article");
   card.className = "event-card";
   card.dataset.kind = entry.kind;
   card.dataset.status = status;
+  card.dataset.entryId = id;
+  card.setAttribute("role", "button");
+  card.setAttribute("tabindex", "0");
   card.innerHTML = `
     <span class="event-status event-status--${status}">${escapeHtml(statusLabel(status))}</span>
     <div class="event-card__art event-art ${artClass} event-art--scanline" aria-hidden="true">

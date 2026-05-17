@@ -2,7 +2,7 @@ import { CONFIG } from "../../config.js";
 import { t } from "../../i18n.js";
 import { estimateDurationMin, isValuableReward, isRecommended, scoreEntry } from "../recommend.js";
 import { buildEventCard, buildEmpty, escapeHtml } from "./_card.js";
-import { translatePool, translateFaction } from "../labels.js";
+import { translatePool, translateFaction, translateReward } from "../labels.js";
 
 function entryFromSortie(s) {
   if (!s || s.expired) return null;
@@ -40,7 +40,7 @@ function entryFromArbitration(a) {
     kind: "arbitration",
     title: a.node,
     subtitle: [a.type, a.enemy].filter(Boolean).join(" · "),
-    rewards: ["Vitus Essence"],
+    rewards: [translateReward("Vitus Essence")],
     expiry: a.expiry,
     activation: a.activation,
     durationMin: estimateDurationMin(a, { kind: "arbitration" }),
@@ -55,7 +55,7 @@ function entryFromArchimedea(a) {
     kind: "archimedea",
     title: t("tracker.sections.archimedea"),
     subtitle: a.deviation?.description || "",
-    rewards: ["Archon Shard"],
+    rewards: [translateReward("Archon Shard")],
     expiry: a.expiry,
     activation: a.activation,
     durationMin: estimateDurationMin(a, { kind: "archimedea" }),
@@ -85,7 +85,7 @@ function entryFromInvasion(i) {
     kind: "invasion",
     title: i.node || t("tracker.sections.invasions"),
     subtitle: `${i.attackingFaction || ""} ↔ ${i.defendingFaction || ""}`,
-    rewards: [i.attackerReward?.asString, i.defenderReward?.asString].filter(Boolean),
+    rewards: [i.attackerReward?.asString, i.defenderReward?.asString].filter(Boolean).map(translateReward),
     activation: i.activation,
     durationMin: estimateDurationMin(i),
     valuable: isValuableReward(i, { kind: "invasion" }),
@@ -99,7 +99,7 @@ function entryFromAlert(a) {
     kind: "alert",
     title: [a.mission?.type, a.mission?.node].filter(Boolean).join(" · ") || t("alerts.unknown"),
     subtitle: a.mission?.faction || "",
-    rewards: [a.mission?.reward?.asString].filter(Boolean),
+    rewards: [a.mission?.reward?.asString].filter(Boolean).map(translateReward),
     expiry: a.expiry,
     activation: a.activation,
     durationMin: estimateDurationMin(a.mission),

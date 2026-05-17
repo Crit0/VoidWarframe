@@ -10,6 +10,8 @@ import {
 } from "./tracker/settings.js";
 import { startTicker } from "./tracker/format.js";
 import { startRefreshCycle, formatRefreshRemaining } from "./tracker/refresh.js";
+import { initModal, openEventModal } from "./tracker/modal.js";
+import { entryById, resetEntryRegistry } from "./tracker/sections/_card.js";
 import * as Cycles from "./tracker/sections/cycles.js";
 import * as Activities from "./tracker/sections/activities.js";
 import * as Fissures from "./tracker/sections/fissures.js";
@@ -133,6 +135,7 @@ function applyTabVisibility() {
 function renderAll() {
   if (!lastData) return;
   const ctx = ctxNow();
+  resetEntryRegistry();
   Recommended.renderHighlight($("#recommended-highlight"), lastData, ctx);
   Cycles.renderCycles($("#cycles-grid"), lastData, ctx);
   Activities.renderActivities($("#activities-grid"), lastData, ctx);
@@ -143,6 +146,24 @@ function renderAll() {
   updateTabCounts();
   applyTabVisibility();
   applyI18n();
+}
+
+function setupCardClickDelegation() {
+  document.addEventListener("click", (e) => {
+    const card = e.target.closest(".event-card");
+    if (!card || !card.dataset.entryId) return;
+    if (e.target.closest("a")) return;
+    const entry = entryById.get(card.dataset.entryId);
+    if (entry) openEventModal(entry);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    const card = e.target.closest(".event-card");
+    if (!card || !card.dataset.entryId) return;
+    e.preventDefault();
+    const entry = entryById.get(card.dataset.entryId);
+    if (entry) openEventModal(entry);
+  });
 }
 
 function renderSkeletons() {
@@ -202,6 +223,8 @@ async function bootstrap() {
     mountRightRail($(".right-rail"));
     mountTabs($(".tracker-tabs"));
     applyI18n();
+    initModal($("#modal-root"));
+    setupCardClickDelegation();
     startTicker(document);
     initReveal();
     setupRefreshUi();

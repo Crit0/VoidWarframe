@@ -1,6 +1,6 @@
 import { t } from "../../i18n.js";
 import { buildEventCard, buildEmpty, buildSkeletons } from "./_card.js";
-import { translatePool, translateFaction } from "../labels.js";
+import { translatePool, translateFaction, translateReward } from "../labels.js";
 
 function variantsOf(item) {
   return (item.variants || item.missions || []).map((v) => ({
@@ -55,7 +55,7 @@ export function renderActivities(container, data, ctx) {
       kind: "arbitration",
       title: data.arbitration.node,
       subtitle: [data.arbitration.type, data.arbitration.enemy].filter(Boolean).join(" · "),
-      rewards: asRewards("Vitus Essence", "Endo"),
+      rewards: asRewards(translateReward("Vitus Essence"), translateReward("Endo")),
       expiry: data.arbitration.expiry,
       activation: data.arbitration.activation,
     });
@@ -68,7 +68,7 @@ export function renderActivities(container, data, ctx) {
         kind: "archimedea",
         title: t("tracker.sections.archimedea"),
         subtitle: a.deviation?.description || a.personalModifiers?.[0]?.description || "",
-        rewards: asRewards("Archon Shard", "Cascadia Empowered"),
+        rewards: asRewards(translateReward("Archon Shard"), "Cascadia Empowered"),
         variants: (a.missions || []).map((m) => ({ missionType: m.missionType, node: m.node })),
         expiry: a.expiry,
         activation: a.activation,
@@ -81,7 +81,7 @@ export function renderActivities(container, data, ctx) {
       kind: "steelPath",
       title: data.steelPath.currentReward?.name || t("tracker.sections.steelPath"),
       subtitle: t("tracker.sections.steelPath"),
-      rewards: data.steelPath.currentReward?.cost ? [`${data.steelPath.currentReward.cost} Steel Essence`] : [],
+      rewards: data.steelPath.currentReward?.cost ? [translateReward(`${data.steelPath.currentReward.cost} Steel Essence`)] : [],
       expiry: data.steelPath.expiry,
       activation: data.steelPath.activation,
     });

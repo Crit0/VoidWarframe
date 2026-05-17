@@ -180,7 +180,42 @@
       "discount": "Discount",
       "stock": "Stock",
       "empty": "Inventory coming soon",
-      "nightwaveHint": "Nightwave rewards: see the active challenges below for this series"
+      "nightwaveHint": "Nightwave rewards: see the active challenges below for this series",
+      "varziaHint": "Inventory depends on the current Prime Resurgence rotation. Relics and parts may be absent this week."
+    },
+    "access": {
+      "title": "What I have access to",
+      "hint": "Uncheck — the event won't appear in recommendations",
+      "sortie": "Sortie",
+      "sortie_hint": "Requires \"The War Within\" quest",
+      "archonHunt": "Archon Hunt",
+      "archonHunt_hint": "Requires \"Veilbreaker\" quest",
+      "archimedea": "Deep Archimedea",
+      "archimedea_hint": "Requires Cavia + \"Whispers in the Walls\"",
+      "steelPath": "Steel Path",
+      "steelPath_hint": "Requires completing the entire star chart"
+    },
+    "loot": {
+      "title": "What to farm",
+      "hint": "Recommendations will filter by the chosen loot",
+      "onlyRare": "Only rare loot",
+      "types": {
+        "prime": "Prime",
+        "relic": "Relics",
+        "archon": "Shards",
+        "steelEssence": "Steel Essence",
+        "aya": "Aya",
+        "forma": "Forma",
+        "kuva": "Kuva",
+        "endo": "Endo",
+        "nitain": "Nitain"
+      }
+    },
+    "modal": {
+      "where": "Where",
+      "time": "Time",
+      "until": "until {time} your local time",
+      "wiki": "Open on Wikia"
     },
     "empty": {
       "section": "Nothing active right now"

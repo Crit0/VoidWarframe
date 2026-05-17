@@ -180,7 +180,42 @@
       "discount": "Скидка",
       "stock": "Осталось",
       "empty": "Инвентарь скоро появится",
-      "nightwaveHint": "Награды Nightwave: смотрите задания текущей серии ниже"
+      "nightwaveHint": "Награды Nightwave: смотрите задания текущей серии ниже",
+      "varziaHint": "Список зависит от текущей ротации Prime Resurgence. Реликвии и парты могут отсутствовать в этой неделе."
+    },
+    "access": {
+      "title": "Что мне доступно",
+      "hint": "Снимите галочку — событие не появится в рекомендациях",
+      "sortie": "Sortie",
+      "sortie_hint": "Нужен квест «The War Within»",
+      "archonHunt": "Архон-охота",
+      "archonHunt_hint": "Нужен квест «Veilbreaker»",
+      "archimedea": "Глубокий Архимед",
+      "archimedea_hint": "Нужны Cavia и квест «Whispers in the Walls»",
+      "steelPath": "Стальной путь",
+      "steelPath_hint": "Нужно завершить всю звёздную карту"
+    },
+    "loot": {
+      "title": "Что хочу фармить",
+      "hint": "Рекомендации отфильтруются под выбранный лут",
+      "onlyRare": "Только редкий лут",
+      "types": {
+        "prime": "Прайм",
+        "relic": "Реликвии",
+        "archon": "Осколки",
+        "steelEssence": "Steel Essence",
+        "aya": "Aya",
+        "forma": "Форма",
+        "kuva": "Кува",
+        "endo": "Эндо",
+        "nitain": "Нитаин"
+      }
+    },
+    "modal": {
+      "where": "Где проходит",
+      "time": "Время",
+      "until": "до {time} вашего времени",
+      "wiki": "Открыть на Wikia"
     },
     "empty": {
       "section": "Пока ничего активного"

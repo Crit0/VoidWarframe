@@ -1,6 +1,6 @@
 import { t } from "../../i18n.js";
 import { buildEventCard, buildEmpty } from "./_card.js";
-import { translateFaction } from "../labels.js";
+import { translateFaction, translateReward } from "../labels.js";
 
 const SPECIAL_TAGS = new Set([
   "TennoCon", "TennoCon2024", "TennoCon2025", "TennoCon2026",
@@ -22,7 +22,7 @@ function entryFromAlert(a) {
     kind: "alert",
     title: [m.type, m.node].filter(Boolean).join(" · ") || t("alerts.unknown"),
     subtitle: translateFaction(m.faction || ""),
-    rewards: [m.reward?.asString].filter(Boolean),
+    rewards: [m.reward?.asString].filter(Boolean).map(translateReward),
     expiry: a.expiry,
     activation: a.activation,
   };
@@ -35,13 +35,13 @@ function entryFromInvasion(inv) {
     kind: "invasion",
     title: inv.node || t("tracker.sections.invasions"),
     subtitle: `${translateFaction(inv.attackingFaction || "")} ↔ ${translateFaction(inv.defendingFaction || "")}`,
-    rewards: [r1, r2].filter(Boolean),
+    rewards: [r1, r2].filter(Boolean).map(translateReward),
     activation: inv.activation,
   };
 }
 
 function entryFromEvent(ev) {
-  const reward = (ev.rewards && ev.rewards[0]?.asString) || "";
+  const reward = translateReward((ev.rewards && ev.rewards[0]?.asString) || "");
   const special = isSpecial(ev);
   return {
     kind: special ? "special" : "event",

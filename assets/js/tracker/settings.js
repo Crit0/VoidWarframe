@@ -16,12 +16,17 @@ const FILTER_KEYS = [
   "nightwave", "traders",
 ];
 
+const ACCESS_KEYS = ["sortie", "archonHunt", "archimedea", "steelPath"];
+const LOOT_TYPES = ["prime", "relic", "archon", "steelEssence", "aya", "forma", "kuva", "endo", "nitain"];
+
 const DEFAULTS = Object.freeze({
   budgetMin: 60,
   recommend: { on: true, valuable: true, fits: true },
   filters: Object.fromEntries(FILTER_KEYS.map((k) => [k, true])),
   fissureTab: "normal",
-  tab: "all", // outer tab: all|important|daily|weekly|cycles|operations|traders
+  tab: "all",
+  access: Object.fromEntries(ACCESS_KEYS.map((k) => [k, true])),
+  loot:   { onlyRare: false, types: Object.fromEntries(LOOT_TYPES.map((k) => [k, false])) },
 });
 
 const listeners = new Set();
@@ -48,12 +53,17 @@ function mergeDefaults(p) {
     out.recommend.fits = !!p.recommend.fits;
   }
   if (p.filters) {
-    for (const k of FILTER_KEYS) {
-      if (typeof p.filters[k] === "boolean") out.filters[k] = p.filters[k];
-    }
+    for (const k of FILTER_KEYS) if (typeof p.filters[k] === "boolean") out.filters[k] = p.filters[k];
   }
   if (p.fissureTab === "normal" || p.fissureTab === "steelPath") out.fissureTab = p.fissureTab;
   if (typeof p.tab === "string") out.tab = p.tab;
+  if (p.access) {
+    for (const k of ACCESS_KEYS) if (typeof p.access[k] === "boolean") out.access[k] = p.access[k];
+  }
+  if (p.loot) {
+    out.loot.onlyRare = !!p.loot.onlyRare;
+    if (p.loot.types) for (const k of LOOT_TYPES) if (typeof p.loot.types[k] === "boolean") out.loot.types[k] = p.loot.types[k];
+  }
   return out;
 }
 
@@ -68,19 +78,15 @@ export function onSettingsChange(fn) { listeners.add(fn); return () => listeners
 
 export function setBudget(min) { state.budgetMin = min; save(); emit(); }
 export function setRecommend(patch) { Object.assign(state.recommend, patch); save(); emit(); }
-export function setFilter(key, value) {
-  if (!(key in state.filters)) return;
-  state.filters[key] = !!value; save(); emit();
-}
-export function setFissureTab(tab) {
-  if (tab !== "normal" && tab !== "steelPath") return;
-  state.fissureTab = tab; save(); emit();
-}
+export function setFilter(key, value) { if (!(key in state.filters)) return; state.filters[key] = !!value; save(); emit(); }
+export function setFissureTab(tab) { if (tab !== "normal" && tab !== "steelPath") return; state.fissureTab = tab; save(); emit(); }
 export function setTab(tab) { state.tab = tab; save(); emit(); }
-
+export function setAccess(key, value) { if (!(key in state.access)) return; state.access[key] = !!value; save(); emit(); }
+export function setLootRare(value) { state.loot.onlyRare = !!value; save(); emit(); }
+export function setLootType(key, value) { if (!(key in state.loot.types)) return; state.loot.types[key] = !!value; save(); emit(); }
 export function resetSettings() { state = clone(DEFAULTS); save(); emit(); }
 
-/* ============== Time-filter UI used in right rail + sheet ============== */
+/* ============== UI helpers ============== */
 
 function timeChipsHtml() {
   return `
@@ -94,23 +100,73 @@ function timeChipsHtml() {
   `;
 }
 
-export function mountRightRail(root) {
-  if (!root) return;
-  root.innerHTML = `
+function accessHtml() {
+  return `
+    <ul class="access-list">
+      ${ACCESS_KEYS.map((k) => `
+        <li>
+          <label class="access-row">
+            <input type="checkbox" data-access="${k}">
+            <span class="access-row__name">${t(`tracker.access.${k}`)}</span>
+            <span class="access-row__hint">${t(`tracker.access.${k}_hint`)}</span>
+          </label>
+        </li>
+      `).join("")}
+    </ul>
+  `;
+}
+
+function lootHtml() {
+  return `
+    <label class="loot-toggle">
+      <input type="checkbox" data-loot-rare>
+      <span>${t("tracker.loot.onlyRare")}</span>
+    </label>
+    <div class="time-chips loot-chips" data-group="loot" role="group">
+      ${LOOT_TYPES.map((k) => `
+        <button type="button" class="time-chip" data-loot-type="${k}" aria-pressed="false">
+          ${t(`tracker.loot.types.${k}`)}
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function panelsHtml() {
+  return `
     <div class="right-rail__panel right-rail__panel--gold ornate-corners">
       <span class="ornate-corner-l"></span><span class="ornate-corner-r"></span>
       <h3 class="right-rail__title">${t("tracker.rail.timeFilter")}</h3>
       <p class="right-rail__hint">${t("tracker.rail.timeHint")}</p>
       ${timeChipsHtml()}
     </div>
+
+    <div class="right-rail__panel">
+      <h3 class="right-rail__title">${t("tracker.access.title")}</h3>
+      <p class="right-rail__hint">${t("tracker.access.hint")}</p>
+      ${accessHtml()}
+    </div>
+
+    <div class="right-rail__panel">
+      <h3 class="right-rail__title">${t("tracker.loot.title")}</h3>
+      <p class="right-rail__hint">${t("tracker.loot.hint")}</p>
+      ${lootHtml()}
+    </div>
+
     <div class="right-rail__panel">
       <button type="button" class="map-cta" data-action="map">
         <svg><use href="#g-map"/></svg>
         ${t("tracker.rail.map")}
       </button>
       <p class="right-rail__hint" style="margin-top:0.6rem; margin-bottom:0">${t("tracker.rail.mapHint")}</p>
+      <button type="button" class="tracker-reset" style="margin-top:0.85rem; width:100%" data-action="reset">${t("tracker.settings.reset")}</button>
     </div>
   `;
+}
+
+export function mountRightRail(root) {
+  if (!root) return;
+  root.innerHTML = panelsHtml();
   syncUi(root);
   wireRoot(root);
   onLangChange(() => mountRightRail(root));
@@ -125,11 +181,7 @@ export function mountSheet(root) {
         <h2 class="sheet__title">${t("tracker.sheet.title")}</h2>
         <button type="button" class="sheet__close" data-close aria-label="${t("tracker.sheet.close")}">×</button>
       </div>
-      <div class="right-rail__panel right-rail__panel--gold">
-        <h3 class="right-rail__title">${t("tracker.rail.timeFilter")}</h3>
-        <p class="right-rail__hint">${t("tracker.rail.timeHint")}</p>
-        ${timeChipsHtml()}
-      </div>
+      ${panelsHtml()}
     </div>
   `;
   syncUi(root);
@@ -140,25 +192,53 @@ export function mountSheet(root) {
 function wireRoot(root) {
   root.addEventListener("click", (e) => {
     const btn = e.target.closest("button");
-    if (!btn) return;
-    if (btn.dataset.min !== undefined) {
-      const min = btn.dataset.min === "" ? null : Number(btn.dataset.min);
-      setBudget(min);
-      document.querySelectorAll(".time-chips [data-min]").forEach((b) => {
-        const bm = b.dataset.min === "" ? null : Number(b.dataset.min);
-        b.setAttribute("aria-pressed", String(bm === min));
-      });
+    if (btn) {
+      if (btn.dataset.min !== undefined) {
+        const min = btn.dataset.min === "" ? null : Number(btn.dataset.min);
+        setBudget(min);
+        document.querySelectorAll(".time-chips [data-min]").forEach((b) => {
+          const bm = b.dataset.min === "" ? null : Number(b.dataset.min);
+          b.setAttribute("aria-pressed", String(bm === min));
+        });
+        return;
+      }
+      if (btn.dataset.lootType) {
+        const key = btn.dataset.lootType;
+        setLootType(key, !state.loot.types[key]);
+        document.querySelectorAll(`[data-loot-type="${key}"]`).forEach((b) =>
+          b.setAttribute("aria-pressed", String(state.loot.types[key])));
+        return;
+      }
+      if (btn.dataset.action === "map") {
+        const toast = document.querySelector(".toast") || (() => {
+          const el = document.createElement("div");
+          el.className = "toast";
+          document.body.appendChild(el);
+          return el;
+        })();
+        toast.textContent = t("tracker.rail.mapHint");
+        toast.classList.add("is-visible");
+        setTimeout(() => toast.classList.remove("is-visible"), 2200);
+        return;
+      }
+      if (btn.dataset.action === "reset") {
+        resetSettings();
+        document.querySelectorAll(".tracker-settings-host, .right-rail, .sheet").forEach((host) => {
+          if (host.classList.contains("right-rail")) mountRightRail(host);
+          else if (host.classList.contains("sheet")) mountSheet(host);
+        });
+        return;
+      }
     }
-    if (btn.dataset.action === "map") {
-      const toast = document.querySelector(".toast") || (() => {
-        const el = document.createElement("div");
-        el.className = "toast";
-        document.body.appendChild(el);
-        return el;
-      })();
-      toast.textContent = t("tracker.rail.mapHint");
-      toast.classList.add("is-visible");
-      setTimeout(() => toast.classList.remove("is-visible"), 2200);
+    const input = e.target.closest("input[type=checkbox]");
+    if (input) {
+      if (input.dataset.access) {
+        setAccess(input.dataset.access, input.checked);
+        document.querySelectorAll(`[data-access="${input.dataset.access}"]`).forEach((i) => { i.checked = input.checked; });
+      } else if (input.hasAttribute("data-loot-rare")) {
+        setLootRare(input.checked);
+        document.querySelectorAll("[data-loot-rare]").forEach((i) => { i.checked = input.checked; });
+      }
     }
   });
 }
@@ -167,6 +247,11 @@ function syncUi(root) {
   root.querySelectorAll("[data-min]").forEach((b) => {
     const m = b.dataset.min === "" ? null : Number(b.dataset.min);
     b.setAttribute("aria-pressed", String(m === state.budgetMin));
+  });
+  root.querySelectorAll("[data-access]").forEach((i) => { i.checked = !!state.access[i.dataset.access]; });
+  root.querySelectorAll("[data-loot-rare]").forEach((i) => { i.checked = !!state.loot.onlyRare; });
+  root.querySelectorAll("[data-loot-type]").forEach((b) => {
+    b.setAttribute("aria-pressed", String(!!state.loot.types[b.dataset.lootType]));
   });
 }
 
@@ -190,5 +275,5 @@ function syncTabs(root) {
   });
 }
 
-/* Legacy: kept for backwards compat with code that called mountSettingsStrip. */
-export function mountSettingsStrip(_root) { /* no-op: strip replaced by rail + sheet */ }
+/* Legacy no-op */
+export function mountSettingsStrip(_root) {}

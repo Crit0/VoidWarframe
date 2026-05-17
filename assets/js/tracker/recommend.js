@@ -86,13 +86,29 @@ function collectRewardString(item) {
   return parts.join(" ");
 }
 
+import { matchesLootTypes } from "./labels.js";
+
 export function isRecommended(entry, settings) {
   if (!settings?.recommend?.on) return false;
+
+  // Access filter — if user marked this event as unavailable, hide
+  const accessKey = entry.kind === "archonHunt" ? "archonHunt" : entry.kind;
+  if (settings.access && accessKey in settings.access && !settings.access[accessKey]) return false;
+
   if (settings.recommend.fits) {
     const budget = settings.budgetMin;
     if (budget != null && entry.durationMin > budget) return false;
   }
+
   if (settings.recommend.valuable && !entry.valuable) return false;
+
+  // Loot filter
+  const loot = settings.loot || {};
+  if (loot.onlyRare && !entry.valuable) return false;
+
+  const chosen = loot.types ? Object.entries(loot.types).filter(([, v]) => v).map(([k]) => k) : [];
+  if (chosen.length && !matchesLootTypes(entry, chosen)) return false;
+
   return true;
 }
 
