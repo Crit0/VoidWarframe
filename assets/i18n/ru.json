@@ -290,6 +290,86 @@
     "tracker": "Трэкер",
     "map": "Карта",
     "builder": "Билдер",
+    "inventory": "Инвентарь",
     "menu": "Меню"
+  },
+  "inv": {
+    "title": "Инвентарь",
+    "subtitle": "Моды · мистификаторы · осколки",
+    "kind": "Что показывать",
+    "category": "Категория",
+    "subcategory": "Подкатегория",
+    "polarity": "Полярность",
+    "rarity": "Редкость",
+    "color": "Цвет осколка",
+    "tauforged": "Тауфорджевый",
+    "searchPh": "Поиск по названию…",
+    "ownedOnly": "Только мои",
+    "clearOwned": "Очистить раздел",
+    "confirmClear": "Удалить все отметки в этом разделе?",
+    "owned": "У меня есть",
+    "add": "Добавить",
+    "shown": "{n} из {total}",
+    "loading": "Загружаем каталог…",
+    "empty": "Под выбранные фильтры ничего не нашлось",
+    "more": "…и ещё {n}. Уточните фильтр или поиск.",
+    "dataNote": "Данные с api.warframestat.us · кэш 7 дней",
+    "all": "Все",
+    "yes": "Только Tauforged",
+    "no": "Обычные",
+    "kinds": {
+      "mods":    "Моды",
+      "arcanes": "Мистификаторы",
+      "shards":  "Осколки Архонта"
+    },
+    "cats": {
+      "all":       "Все",
+      "weapons":   "Оружие",
+      "warframe":  "Фреймы",
+      "archwing":  "Арчвинг",
+      "companion": "Компаньон",
+      "other":     "Прочее"
+    },
+    "subcats": {
+      "primary":       "Основное",
+      "secondary":     "Вторичное",
+      "melee":         "Ближнее",
+      "archwingSuit":  "Архкрыло",
+      "archgun":       "Архорудие",
+      "archmelee":     "Архближнее",
+      "necramech":     "Некрамех",
+      "other":         "Прочее"
+    },
+    "pol": {
+      "madurai":   "Madurai",
+      "naramon":   "Naramon",
+      "vazarin":   "Vazarin",
+      "zenurik":   "Zenurik",
+      "penjaga":   "Penjaga",
+      "unairu":    "Unairu",
+      "umbra":     "Umbra",
+      "aura":      "Аура",
+      "universal": "Универсальная"
+    },
+    "rar": {
+      "common":    "Обычный",
+      "uncommon":  "Необычный",
+      "rare":      "Редкий",
+      "legendary": "Легендарный"
+    },
+    "shardColors": {
+      "crimson":  "Алый",
+      "amber":    "Янтарный",
+      "azure":    "Лазурный",
+      "violet":   "Фиолетовый",
+      "emerald":  "Изумрудный",
+      "topaz":    "Топазовый"
+    },
+    "tag": {
+      "augment":   "Augment",
+      "arcane":    "Мистификатор",
+      "shard":     "Осколок",
+      "tauforged": "Tauforged"
+    }
   }
 }

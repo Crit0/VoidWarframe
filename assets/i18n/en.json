@@ -290,6 +290,86 @@
     "tracker": "Tracker",
     "map": "Map",
     "builder": "Builder",
+    "inventory": "Inventory",
     "menu": "Menu"
+  },
+  "inv": {
+    "title": "Inventory",
+    "subtitle": "Mods · arcanes · shards",
+    "kind": "What to show",
+    "category": "Category",
+    "subcategory": "Subcategory",
+    "polarity": "Polarity",
+    "rarity": "Rarity",
+    "color": "Shard color",
+    "tauforged": "Tauforged",
+    "searchPh": "Search by name…",
+    "ownedOnly": "Owned only",
+    "clearOwned": "Clear section",
+    "confirmClear": "Remove all owned marks in this section?",
+    "owned": "Owned",
+    "add": "Add",
+    "shown": "{n} of {total}",
+    "loading": "Loading catalog…",
+    "empty": "Nothing matches the filters",
+    "more": "…and {n} more. Narrow the filter or search.",
+    "dataNote": "Data from api.warframestat.us · cached 7 days",
+    "all": "All",
+    "yes": "Tauforged only",
+    "no": "Regular",
+    "kinds": {
+      "mods":    "Mods",
+      "arcanes": "Arcanes",
+      "shards":  "Archon Shards"
+    },
+    "cats": {
+      "all":       "All",
+      "weapons":   "Weapons",
+      "warframe":  "Warframes",
+      "archwing":  "Archwing",
+      "companion": "Companion",
+      "other":     "Other"
+    },
+    "subcats": {
+      "primary":       "Primary",
+      "secondary":     "Secondary",
+      "melee":         "Melee",
+      "archwingSuit":  "Archwing",
+      "archgun":       "Arch-Gun",
+      "archmelee":     "Arch-Melee",
+      "necramech":     "Necramech",
+      "other":         "Other"
+    },
+    "pol": {
+      "madurai":   "Madurai",
+      "naramon":   "Naramon",
+      "vazarin":   "Vazarin",
+      "zenurik":   "Zenurik",
+      "penjaga":   "Penjaga",
+      "unairu":    "Unairu",
+      "umbra":     "Umbra",
+      "aura":      "Aura",
+      "universal": "Universal"
+    },
+    "rar": {
+      "common":    "Common",
+      "uncommon":  "Uncommon",
+      "rare":      "Rare",
+      "legendary": "Legendary"
+    },
+    "shardColors": {
+      "crimson":  "Crimson",
+      "amber":    "Amber",
+      "azure":    "Azure",
+      "violet":   "Violet",
+      "emerald":  "Emerald",
+      "topaz":    "Topaz"
+    },
+    "tag": {
+      "augment":   "Augment",
+      "arcane":    "Arcane",
+      "shard":     "Shard",
+      "tauforged": "Tauforged"
+    }
   }
 }
