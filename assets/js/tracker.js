@@ -185,7 +185,7 @@ async function loadAndRender(force = false) {
     setServerStatus(stale ? "stale" : "ok");
     renderAll();
   } catch (err) {
-    console.error("[VW] tracker fetch failed:", err);
+    console.error("[VW] tracker fetch failed:", (err && err.message) || String(err));
     setServerStatus("error");
     if (!lastData) {
       showFatal(err);

@@ -361,6 +361,11 @@
       "polarity": "Polarity",
       "drain":    "Drain"
     },
+    "sheet": {
+      "open":  "Filters",
+      "title": "Filters & Sort",
+      "close": "Close"
+    },
     "pol": {
       "madurai":   "Madurai",
       "naramon":   "Naramon",

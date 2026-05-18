@@ -8,6 +8,11 @@ const MODS_TTL_MS  = 7 * 24 * 3600 * 1000;
 const VERSION = 2;  // bumped: mods now have maxStats, no levelStats
 const memCache = new Map();
 const inflight = new Map();
+const lastError = new Map();  // memKey → Error
+
+export function getLastFetchError(kind, lang) {
+  return lastError.get(`${kind}_${lang}`) || null;
+}
 
 function cacheKey(kind, lang) { return `vw_${kind}_${lang}_v${VERSION}`; }
 
@@ -27,13 +32,17 @@ function writeCache(kind, lang, data) {
   } catch (e) { console.warn(`[VW] ${kind} cache write failed:`, e.message); }
 }
 
-async function fetchOnce(kind, url, lang, transform) {
+async function fetchOnce(kind, url, lang, transform, { force = false } = {}) {
   const memKey = `${kind}_${lang}`;
-  if (memCache.has(memKey)) return memCache.get(memKey);
-  if (inflight.has(memKey)) return inflight.get(memKey);
-
-  const cached = readCache(kind, lang);
-  if (cached) { memCache.set(memKey, cached); return cached; }
+  if (force) {
+    memCache.delete(memKey);
+    inflight.delete(memKey);
+  } else {
+    if (memCache.has(memKey)) return memCache.get(memKey);
+    if (inflight.has(memKey)) return inflight.get(memKey);
+    const cached = readCache(kind, lang);
+    if (cached) { memCache.set(memKey, cached); return cached; }
+  }
 
   const p = (async () => {
     try {
@@ -44,9 +53,12 @@ async function fetchOnce(kind, url, lang, transform) {
       if (typeof transform === "function") arr = arr.map(transform);
       writeCache(kind, lang, arr);
       memCache.set(memKey, arr);
+      lastError.delete(memKey);
       return arr;
     } catch (err) {
-      console.warn(`[VW] ${kind} fetch failed:`, err);
+      const msg = (err && err.message) || String(err);
+      console.warn(`[VW] ${kind} fetch failed:`, url, msg);
+      lastError.set(memKey, err);
       memCache.set(memKey, []);
       return [];
     } finally {
@@ -57,9 +69,9 @@ async function fetchOnce(kind, url, lang, transform) {
   return p;
 }
 
-export function getMods(lang) {
+export function getMods(lang, opts) {
   const url = `${CONFIG.API_BASE}/mods?language=${lang}&only=name,uniqueName,imageName,description,polarity,baseDrain,fusionLimit,type,rarity,compatName,isAugment,levelStats`;
-  return fetchOnce("mods", url, lang, slimMod);
+  return fetchOnce("mods", url, lang, slimMod, opts);
 }
 
 function slimMod(m) {
@@ -82,9 +94,9 @@ function slimMod(m) {
   };
 }
 
-export function getArcanes(lang) {
+export function getArcanes(lang, opts) {
   const url = `${CONFIG.API_BASE}/arcanes?language=${lang}`;
-  return fetchOnce("arcanes", url, lang);
+  return fetchOnce("arcanes", url, lang, undefined, opts);
 }
 
 /* ============== Archon shards (static catalog) ============== */

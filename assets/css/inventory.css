@@ -74,6 +74,31 @@
   align-items: center;
 }
 
+.inv-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  padding: 0 6px;
+  height: 20px;
+  margin-left: 0.5rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.inv-filter-count[hidden] { display: none; }
+
+#inv-sheet .sheet__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+body.body-lock { overflow: hidden; }
+
 .inv-tab {
   display: inline-flex;
   align-items: center;

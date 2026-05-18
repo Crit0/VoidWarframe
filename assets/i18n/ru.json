@@ -361,6 +361,11 @@
       "polarity": "По полярности",
       "drain":    "По вместимости"
     },
+    "sheet": {
+      "open":  "Фильтры",
+      "title": "Фильтры и сортировка",
+      "close": "Закрыть"
+    },
     "pol": {
       "madurai":   "Madurai",
       "naramon":   "Naramon",

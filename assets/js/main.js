@@ -50,7 +50,7 @@ async function loadAndRender() {
         { stale },
       );
   } catch (err) {
-    console.error("API error:", err);
+    console.error("[VW] main API error:", (err && err.message) || String(err));
     if (newsEl) renderNewsError(newsEl, loadAndRender);
     if (alertsEl) renderAlertsError(alertsEl, loadAndRender);
   }

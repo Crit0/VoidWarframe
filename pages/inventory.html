@@ -129,100 +129,127 @@
               </div>
             </div>
 
-            <!-- Polarity -->
-            <div class="inv-filter-group" id="group-polarity">
-              <div class="inv-filter-group__label" data-i18n="inv.polarity">Полярность</div>
-              <div class="inv-filter-group__chips">
-                <button type="button" class="inv-chip" data-polarity="all"        aria-pressed="true"  data-i18n="inv.all">Все</button>
-                <button type="button" class="inv-chip" data-polarity="madurai"    data-i18n="inv.pol.madurai">Madurai</button>
-                <button type="button" class="inv-chip" data-polarity="naramon"    data-i18n="inv.pol.naramon">Naramon</button>
-                <button type="button" class="inv-chip" data-polarity="vazarin"    data-i18n="inv.pol.vazarin">Vazarin</button>
-                <button type="button" class="inv-chip" data-polarity="zenurik"    data-i18n="inv.pol.zenurik">Zenurik</button>
-                <button type="button" class="inv-chip" data-polarity="penjaga"    data-i18n="inv.pol.penjaga">Penjaga</button>
-                <button type="button" class="inv-chip" data-polarity="unairu"     data-i18n="inv.pol.unairu">Unairu</button>
-                <button type="button" class="inv-chip" data-polarity="umbra"      data-i18n="inv.pol.umbra">Umbra</button>
-                <button type="button" class="inv-chip" data-polarity="aura"       data-i18n="inv.pol.aura">Аура</button>
-                <button type="button" class="inv-chip" data-polarity="universal"  data-i18n="inv.pol.universal">Универсальная</button>
-              </div>
-            </div>
-
-            <!-- Rarity -->
-            <div class="inv-filter-group" id="group-rarity">
-              <div class="inv-filter-group__label" data-i18n="inv.rarity">Редкость</div>
-              <div class="inv-filter-group__chips">
-                <button type="button" class="inv-chip" data-rarity="all"       aria-pressed="true" data-i18n="inv.all">Все</button>
-                <button type="button" class="inv-chip" data-rarity="common"    data-i18n="inv.rar.common">Обычный</button>
-                <button type="button" class="inv-chip" data-rarity="uncommon"  data-i18n="inv.rar.uncommon">Необычный</button>
-                <button type="button" class="inv-chip" data-rarity="rare"      data-i18n="inv.rar.rare">Редкий</button>
-                <button type="button" class="inv-chip" data-rarity="legendary" data-i18n="inv.rar.legendary">Легендарный</button>
-              </div>
-            </div>
-
-            <!-- Mod families -->
-            <div class="inv-filter-group" id="group-families">
-              <div class="inv-filter-group__label" data-i18n="inv.family">Семейство модов</div>
-              <div class="inv-filter-group__chips">
-                <button type="button" class="inv-chip" data-family="prime"      data-i18n="inv.fam.prime">Прайм</button>
-                <button type="button" class="inv-chip" data-family="archon"     data-i18n="inv.fam.archon">Архонтовые</button>
-                <button type="button" class="inv-chip" data-family="galvanized" data-i18n="inv.fam.galvanized">Гальв.</button>
-                <button type="button" class="inv-chip" data-family="amalgam"    data-i18n="inv.fam.amalgam">Амальгама</button>
-                <button type="button" class="inv-chip" data-family="umbra"      data-i18n="inv.fam.umbra">Умбра</button>
-                <button type="button" class="inv-chip" data-family="requiem"    data-i18n="inv.fam.requiem">Реквием</button>
-                <button type="button" class="inv-chip" data-family="augment"    data-i18n="inv.fam.augment">Аугмент</button>
-                <button type="button" class="inv-chip" data-family="stance"     data-i18n="inv.fam.stance">Стойка</button>
-                <button type="button" class="inv-chip" data-family="aura"       data-i18n="inv.fam.aura">Аура</button>
-                <button type="button" class="inv-chip" data-family="riven"      data-i18n="inv.fam.riven">Ривен</button>
-              </div>
-            </div>
-
-            <!-- Shard color -->
-            <div class="inv-filter-group" id="group-color" hidden>
-              <div class="inv-filter-group__label" data-i18n="inv.color">Цвет осколка</div>
-              <div class="inv-filter-group__chips">
-                <button type="button" class="inv-chip" data-color="all"      aria-pressed="true" data-i18n="inv.all">Все</button>
-                <button type="button" class="inv-chip" data-color="crimson"  data-i18n="inv.shardColors.crimson">Алый</button>
-                <button type="button" class="inv-chip" data-color="amber"    data-i18n="inv.shardColors.amber">Янтарный</button>
-                <button type="button" class="inv-chip" data-color="azure"    data-i18n="inv.shardColors.azure">Лазурный</button>
-                <button type="button" class="inv-chip" data-color="violet"   data-i18n="inv.shardColors.violet">Фиолетовый</button>
-                <button type="button" class="inv-chip" data-color="emerald"  data-i18n="inv.shardColors.emerald">Изумрудный</button>
-                <button type="button" class="inv-chip" data-color="topaz"    data-i18n="inv.shardColors.topaz">Топазовый</button>
-              </div>
-            </div>
-
-            <!-- Tauforged -->
-            <div class="inv-filter-group" id="group-tauforged" hidden>
-              <div class="inv-filter-group__label" data-i18n="inv.tauforged">Tauforged</div>
-              <div class="inv-filter-group__chips">
-                <button type="button" class="inv-chip" data-tauforged="all" aria-pressed="true" data-i18n="inv.all">Все</button>
-                <button type="button" class="inv-chip" data-tauforged="yes" data-i18n="inv.yes">Только Tauforged</button>
-                <button type="button" class="inv-chip" data-tauforged="no"  data-i18n="inv.no">Обычные</button>
-              </div>
-            </div>
-
-            <!-- Search + owned + actions -->
+            <!-- Trigger: open filters drawer -->
             <div class="inv-filter-group inv-filter-group--inline">
-              <input id="inv-search" type="search" class="inv-search" placeholder="" data-i18n-attr="placeholder:inv.searchPh">
-              <label class="inv-owned-toggle">
-                <input id="inv-owned-only" type="checkbox">
-                <span data-i18n="inv.ownedOnly">Только мои</span>
-              </label>
-              <div class="inv-actions">
-                <button type="button" class="tracker-reset" data-action="reset" data-i18n="tracker.settings.reset">Сброс</button>
-                <button type="button" class="tracker-reset" data-action="clear-owned" data-i18n="inv.clearOwned">Очистить инвентарь</button>
-              </div>
-            </div>
-
-            <!-- Sort row -->
-            <div class="inv-filter-group">
-              <div class="inv-filter-group__label" data-i18n="inv.sort.label">Сортировка</div>
-              <div class="inv-filter-group__chips">
-                <button type="button" class="inv-chip inv-chip--sort" data-sort-key="name"     aria-pressed="true"  data-dir="asc"><span data-i18n="inv.sort.name">По имени</span></button>
-                <button type="button" class="inv-chip inv-chip--sort" data-sort-key="rarity"   data-dir="asc"><span data-i18n="inv.sort.rarity">По редкости</span></button>
-                <button type="button" class="inv-chip inv-chip--sort" id="sort-polarity" data-sort-key="polarity" data-dir="asc"><span data-i18n="inv.sort.polarity">По полярности</span></button>
-                <button type="button" class="inv-chip inv-chip--sort" id="sort-drain"    data-sort-key="drain"    data-dir="asc"><span data-i18n="inv.sort.drain">По вместимости</span></button>
-              </div>
+              <button type="button" class="tracker-filter-btn" data-open-sheet>
+                <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+                <span data-i18n="inv.sheet.open">Фильтры</span>
+                <span class="inv-filter-count" id="inv-filter-count" hidden>0</span>
+              </button>
             </div>
           </section>
+
+          <!-- Drawer: secondary filters + sort + search + actions -->
+          <div class="sheet" id="inv-sheet" role="dialog" aria-modal="true" aria-labelledby="inv-sheet-title">
+            <div class="sheet__backdrop" data-close></div>
+            <div class="sheet__panel">
+              <div class="sheet__head">
+                <h2 class="sheet__title" id="inv-sheet-title" data-i18n="inv.sheet.title">Фильтры и сортировка</h2>
+                <button type="button" class="sheet__close" data-close aria-label="Закрыть" data-i18n-attr="aria-label:inv.sheet.close">×</button>
+              </div>
+              <div class="sheet__body">
+
+                <!-- Search + owned + actions -->
+                <div class="inv-filter-group inv-filter-group--inline">
+                  <input id="inv-search" type="search" class="inv-search" placeholder="" data-i18n-attr="placeholder:inv.searchPh">
+                  <label class="inv-owned-toggle">
+                    <input id="inv-owned-only" type="checkbox">
+                    <span data-i18n="inv.ownedOnly">Только мои</span>
+                  </label>
+                </div>
+
+                <!-- Polarity -->
+                <div class="inv-filter-group" id="group-polarity">
+                  <div class="inv-filter-group__label" data-i18n="inv.polarity">Полярность</div>
+                  <div class="inv-filter-group__chips">
+                    <button type="button" class="inv-chip" data-polarity="all"        aria-pressed="true"  data-i18n="inv.all">Все</button>
+                    <button type="button" class="inv-chip" data-polarity="madurai"    data-i18n="inv.pol.madurai">Madurai</button>
+                    <button type="button" class="inv-chip" data-polarity="naramon"    data-i18n="inv.pol.naramon">Naramon</button>
+                    <button type="button" class="inv-chip" data-polarity="vazarin"    data-i18n="inv.pol.vazarin">Vazarin</button>
+                    <button type="button" class="inv-chip" data-polarity="zenurik"    data-i18n="inv.pol.zenurik">Zenurik</button>
+                    <button type="button" class="inv-chip" data-polarity="penjaga"    data-i18n="inv.pol.penjaga">Penjaga</button>
+                    <button type="button" class="inv-chip" data-polarity="unairu"     data-i18n="inv.pol.unairu">Unairu</button>
+                    <button type="button" class="inv-chip" data-polarity="umbra"      data-i18n="inv.pol.umbra">Umbra</button>
+                    <button type="button" class="inv-chip" data-polarity="aura"       data-i18n="inv.pol.aura">Аура</button>
+                    <button type="button" class="inv-chip" data-polarity="universal"  data-i18n="inv.pol.universal">Универсальная</button>
+                  </div>
+                </div>
+
+                <!-- Rarity -->
+                <div class="inv-filter-group" id="group-rarity">
+                  <div class="inv-filter-group__label" data-i18n="inv.rarity">Редкость</div>
+                  <div class="inv-filter-group__chips">
+                    <button type="button" class="inv-chip" data-rarity="all"       aria-pressed="true" data-i18n="inv.all">Все</button>
+                    <button type="button" class="inv-chip" data-rarity="common"    data-i18n="inv.rar.common">Обычный</button>
+                    <button type="button" class="inv-chip" data-rarity="uncommon"  data-i18n="inv.rar.uncommon">Необычный</button>
+                    <button type="button" class="inv-chip" data-rarity="rare"      data-i18n="inv.rar.rare">Редкий</button>
+                    <button type="button" class="inv-chip" data-rarity="legendary" data-i18n="inv.rar.legendary">Легендарный</button>
+                  </div>
+                </div>
+
+                <!-- Mod families -->
+                <div class="inv-filter-group" id="group-families">
+                  <div class="inv-filter-group__label" data-i18n="inv.family">Семейство модов</div>
+                  <div class="inv-filter-group__chips">
+                    <button type="button" class="inv-chip" data-family="prime"      data-i18n="inv.fam.prime">Прайм</button>
+                    <button type="button" class="inv-chip" data-family="archon"     data-i18n="inv.fam.archon">Архонтовые</button>
+                    <button type="button" class="inv-chip" data-family="galvanized" data-i18n="inv.fam.galvanized">Гальв.</button>
+                    <button type="button" class="inv-chip" data-family="amalgam"    data-i18n="inv.fam.amalgam">Амальгама</button>
+                    <button type="button" class="inv-chip" data-family="umbra"      data-i18n="inv.fam.umbra">Умбра</button>
+                    <button type="button" class="inv-chip" data-family="requiem"    data-i18n="inv.fam.requiem">Реквием</button>
+                    <button type="button" class="inv-chip" data-family="augment"    data-i18n="inv.fam.augment">Аугмент</button>
+                    <button type="button" class="inv-chip" data-family="stance"     data-i18n="inv.fam.stance">Стойка</button>
+                    <button type="button" class="inv-chip" data-family="aura"       data-i18n="inv.fam.aura">Аура</button>
+                    <button type="button" class="inv-chip" data-family="riven"      data-i18n="inv.fam.riven">Ривен</button>
+                  </div>
+                </div>
+
+                <!-- Shard color -->
+                <div class="inv-filter-group" id="group-color" hidden>
+                  <div class="inv-filter-group__label" data-i18n="inv.color">Цвет осколка</div>
+                  <div class="inv-filter-group__chips">
+                    <button type="button" class="inv-chip" data-color="all"      aria-pressed="true" data-i18n="inv.all">Все</button>
+                    <button type="button" class="inv-chip" data-color="crimson"  data-i18n="inv.shardColors.crimson">Алый</button>
+                    <button type="button" class="inv-chip" data-color="amber"    data-i18n="inv.shardColors.amber">Янтарный</button>
+                    <button type="button" class="inv-chip" data-color="azure"    data-i18n="inv.shardColors.azure">Лазурный</button>
+                    <button type="button" class="inv-chip" data-color="violet"   data-i18n="inv.shardColors.violet">Фиолетовый</button>
+                    <button type="button" class="inv-chip" data-color="emerald"  data-i18n="inv.shardColors.emerald">Изумрудный</button>
+                    <button type="button" class="inv-chip" data-color="topaz"    data-i18n="inv.shardColors.topaz">Топазовый</button>
+                  </div>
+                </div>
+
+                <!-- Tauforged -->
+                <div class="inv-filter-group" id="group-tauforged" hidden>
+                  <div class="inv-filter-group__label" data-i18n="inv.tauforged">Tauforged</div>
+                  <div class="inv-filter-group__chips">
+                    <button type="button" class="inv-chip" data-tauforged="all" aria-pressed="true" data-i18n="inv.all">Все</button>
+                    <button type="button" class="inv-chip" data-tauforged="yes" data-i18n="inv.yes">Только Tauforged</button>
+                    <button type="button" class="inv-chip" data-tauforged="no"  data-i18n="inv.no">Обычные</button>
+                  </div>
+                </div>
+
+                <!-- Sort row -->
+                <div class="inv-filter-group">
+                  <div class="inv-filter-group__label" data-i18n="inv.sort.label">Сортировка</div>
+                  <div class="inv-filter-group__chips">
+                    <button type="button" class="inv-chip inv-chip--sort" data-sort-key="name"     aria-pressed="true"  data-dir="asc"><span data-i18n="inv.sort.name">По имени</span></button>
+                    <button type="button" class="inv-chip inv-chip--sort" data-sort-key="rarity"   data-dir="asc"><span data-i18n="inv.sort.rarity">По редкости</span></button>
+                    <button type="button" class="inv-chip inv-chip--sort" id="sort-polarity" data-sort-key="polarity" data-dir="asc"><span data-i18n="inv.sort.polarity">По полярности</span></button>
+                    <button type="button" class="inv-chip inv-chip--sort" id="sort-drain"    data-sort-key="drain"    data-dir="asc"><span data-i18n="inv.sort.drain">По вместимости</span></button>
+                  </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="inv-filter-group inv-filter-group--inline">
+                  <div class="inv-actions">
+                    <button type="button" class="tracker-reset" data-action="reset" data-i18n="tracker.settings.reset">Сброс</button>
+                    <button type="button" class="tracker-reset" data-action="clear-owned" data-i18n="inv.clearOwned">Очистить инвентарь</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
 
           <div class="inv-status">
             <span id="inv-count">—</span>

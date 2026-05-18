@@ -46,7 +46,7 @@ export async function getWorldstate(lang, { force = false } = {}) {
     return { data, stale: false };
   } catch (err) {
     if (err.name === "AbortError") throw err;
-    console.error("[VW] worldstate fetch failed:", url, err);
+    console.error("[VW] worldstate fetch failed:", url, (err && err.message) || String(err));
     if (cached) {
       return { data: cached.data, stale: true, error: err };
     }

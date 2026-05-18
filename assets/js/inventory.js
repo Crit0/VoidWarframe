@@ -1,7 +1,7 @@
 import { initI18n, applyI18n, setLang, getLang, onLangChange, t } from "./i18n.js";
 import { initSidebar } from "./sidebar.js";
 import { injectGlyphs } from "./glyphs.js";
-import { getMods, getArcanes, getShards } from "./inventory/data.js";
+import { getMods, getArcanes, getShards, getLastFetchError } from "./inventory/data.js";
 import {
   buildModCard, buildArcaneCard, buildShardCard,
   filterMods, filterArcanes, filterShards,
@@ -47,13 +47,35 @@ function saveFilters() {
 
 let data = { mods: [], arcanes: [], shards: [] };
 
-async function loadData(lang) {
-  $("#inv-grid").innerHTML = `<div class="empty-state" style="grid-column:1/-1">${t("inv.loading")}</div>`;
+async function loadData(lang, { force = false } = {}) {
+  const grid = $("#inv-grid");
+  grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">${t("inv.loading")}</div>`;
   const [mods, arcanes, shards] = await Promise.all([
-    getMods(lang), getArcanes(lang), Promise.resolve(getShards(lang)),
+    getMods(lang, { force }),
+    getArcanes(lang, { force }),
+    Promise.resolve(getShards(lang)),
   ]);
   data = { mods, arcanes, shards };
+
+  const err = filters.kind === "mods"    ? getLastFetchError("mods", lang)
+            : filters.kind === "arcanes" ? getLastFetchError("arcanes", lang)
+            : null;
+  if (err) { showInventoryError(err); return; }
   rerender();
+}
+
+function showInventoryError(err) {
+  const grid = $("#inv-grid");
+  const msg = (err && err.message) || String(err);
+  const escape = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  grid.innerHTML = `
+    <div class="status-banner status-banner--error" style="grid-column:1/-1">
+      <span>${escape(t("errors.api"))} — ${escape(msg)}</span>
+      <button class="status-banner__retry" type="button">${escape(t("errors.retry"))}</button>
+    </div>`;
+  const btn = grid.querySelector(".status-banner__retry");
+  if (btn) btn.addEventListener("click", () => loadData(getLang(), { force: true }));
+  $("#inv-pager").innerHTML = "";
 }
 
 function currentFiltered() {
@@ -156,6 +178,39 @@ function syncUi() {
   });
   $("#inv-owned-only").checked = filters.ownedOnly;
   $("#inv-search").value = filters.search;
+
+  const badge = $("#inv-filter-count");
+  if (badge) {
+    const n = activeFilterCount(filters);
+    badge.textContent = String(n);
+    badge.hidden = n === 0;
+  }
+}
+
+function activeFilterCount(f) {
+  let n = 0;
+  if (f.polarity !== "all") n++;
+  if (f.rarity   !== "all") n++;
+  if (Array.isArray(f.families) && f.families.length) n += f.families.length;
+  if (f.color    !== "all") n++;
+  if (f.tauforged!== "all") n++;
+  if ((f.search || "").trim()) n++;
+  if (f.ownedOnly) n++;
+  if (f.sort && (f.sort.key !== "name" || f.sort.dir !== "asc")) n++;
+  return n;
+}
+
+function setupFilterSheet() {
+  const sheet = $("#inv-sheet");
+  const btn = $("[data-open-sheet]");
+  if (!sheet) return;
+  const open  = () => { sheet.classList.add("is-open"); document.body.classList.add("body-lock"); };
+  const close = () => { sheet.classList.remove("is-open"); document.body.classList.remove("body-lock"); };
+  if (btn) btn.addEventListener("click", open);
+  sheet.querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", close));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && sheet.classList.contains("is-open")) close();
+  });
 }
 
 function resetPage() { filters.page = 1; }
@@ -170,7 +225,11 @@ function setupHandlers() {
     if (b.dataset.kind) {
       filters.kind = b.dataset.kind;
       filters.subCategory = "";
-      resetPage(); saveFilters(); syncUi(); rerender(); return;
+      resetPage(); saveFilters(); syncUi();
+      const err = getLastFetchError(filters.kind, getLang());
+      if (err) showInventoryError(err);
+      else rerender();
+      return;
     }
     if (b.dataset.top) {
       filters.topCategory = b.dataset.top;
@@ -260,6 +319,7 @@ async function bootstrap() {
     setupLangSwitcher();
     applyI18n();
     setupHandlers();
+    setupFilterSheet();
     syncUi();
     await loadData(getLang());
   } catch (err) {

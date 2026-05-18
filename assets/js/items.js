@@ -73,7 +73,7 @@ export async function getItemsDict(lang) {
       memCache.set(lang, dict);
       return dict;
     } catch (err) {
-      console.warn("[VW] items dict fetch failed:", err);
+      console.warn("[VW] items dict fetch failed:", url, (err && err.message) || String(err));
       const empty = buildIndex([]);
       memCache.set(lang, empty);
       return empty;
