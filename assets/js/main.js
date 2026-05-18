@@ -3,6 +3,7 @@ import { initI18n, setLang, getLang, onLangChange, t } from "./i18n.js";
 import { initSidebar } from "./sidebar.js";
 import { initReveal, initHeroCanvas } from "./animations.js";
 import { getWorldstate } from "./api.js";
+import { CacheBus } from "./cache-bus.js";
 import { injectGlyphs } from "./glyphs.js";
 import {
   renderNews,
@@ -87,6 +88,10 @@ async function bootstrap() {
     setupSmoothCtas();
     initHeroCanvas();
     initReveal();
+    CacheBus.addEventListener("worldstate-updated", (e) => {
+      if (e.detail.lang !== getLang()) return;
+      loadAndRender();
+    });
     loadAndRender();
   } catch (err) {
     console.error("[VW] home bootstrap failed:", err);

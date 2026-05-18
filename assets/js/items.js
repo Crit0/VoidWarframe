@@ -1,7 +1,9 @@
 import { CONFIG } from "./config.js";
+import { loadBundle } from "./bundle.js";
+import { CacheBus } from "./cache-bus.js";
 
 /* Items dictionary: lookup table for localised name + CDN icon.
-   One bulk fetch per language, cached in localStorage for 7 days. */
+   3-tier loading: localStorage → bundle → API. */
 
 const VERSION = 1;
 const memCache = new Map();      // lang → built dict
@@ -50,24 +52,60 @@ function buildIndex(arr) {
   };
 }
 
+const refreshDebounce = new Map();
+
+async function fetchFromApi(lang) {
+  const url = `${CONFIG.API_BASE}/items?language=${lang}&only=name,uniqueName,imageName`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
+
+function refreshInBackground(lang) {
+  const last = refreshDebounce.get(lang) || 0;
+  if (Date.now() - last < 60 * 1000) return;
+  refreshDebounce.set(lang, Date.now());
+  fetchFromApi(lang)
+    .then((arr) => {
+      writeCache(lang, arr);
+      memCache.set(lang, buildIndex(arr));
+      CacheBus.dispatchEvent(new CustomEvent("items-updated", { detail: { lang, source: "api" } }));
+    })
+    .catch((err) => {
+      console.warn("[VW] items dict refresh failed:", (err && err.message) || String(err));
+    });
+}
+
 export async function getItemsDict(lang) {
-  if (memCache.has(lang)) return memCache.get(lang);
+  if (memCache.has(lang)) {
+    refreshInBackground(lang);
+    return memCache.get(lang);
+  }
   if (inflight.has(lang)) return inflight.get(lang);
 
   const cached = readCache(lang);
   if (cached) {
     const dict = buildIndex(cached);
     memCache.set(lang, dict);
+    refreshInBackground(lang);
     return dict;
   }
 
   const url = `${CONFIG.API_BASE}/items?language=${lang}&only=name,uniqueName,imageName`;
   const p = (async () => {
+    // Try bundle first (local, fast)
+    const bundle = await loadBundle("items", lang);
+    if (bundle && Array.isArray(bundle) && bundle.length) {
+      writeCache(lang, bundle);
+      const dict = buildIndex(bundle);
+      memCache.set(lang, dict);
+      refreshInBackground(lang);
+      return dict;
+    }
+    // Fall back to API
     try {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
-      const data = await res.json();
-      const arr = Array.isArray(data) ? data : [];
+      const arr = await fetchFromApi(lang);
       writeCache(lang, arr);
       const dict = buildIndex(arr);
       memCache.set(lang, dict);

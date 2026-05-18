@@ -74,6 +74,16 @@
     "cached": "Showing cached data — couldn't refresh.",
     "retry": "Retry"
   },
+  "data": {
+    "age": {
+      "fresh":   "Updated just now",
+      "minutes": "Updated {n} min ago",
+      "hours":   "Updated {n} h ago",
+      "days":    "Updated {n} d ago",
+      "old":     "Long out of date",
+      "fromBundle": "Offline mode"
+    }
+  },
   "footer": {
     "copy": "© 2026 Voide Warframe — unofficial fan site. Warframe® is a trademark of Digital Extremes Ltd.",
     "api": "Data by",

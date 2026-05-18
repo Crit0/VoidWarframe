@@ -319,6 +319,25 @@
 
 .empty-state { color: var(--text-2); font-style: italic; padding: 2rem; text-align: center; }
 
+/* ===== Data-age badge (bundle freshness) ===== */
+.data-age {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+.data-age[hidden] { display: none; }
+.data-age--ok      { color: var(--text-2); }
+.data-age--fresh   { color: var(--text-2); }
+.data-age--stale   { color: var(--neon-amber); border: 1px solid currentColor; background: rgba(255, 176, 32, 0.06); }
+.data-age--old     { color: var(--neon-red);   border: 1px solid currentColor; background: rgba(255, 51, 85, 0.06); }
+.data-age__icon    { font-size: 0.95em; opacity: 0.7; }
+
 /* ===== About strip ===== */
 .about {
   display: grid;

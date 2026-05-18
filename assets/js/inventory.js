@@ -1,7 +1,9 @@
 import { initI18n, applyI18n, setLang, getLang, onLangChange, t } from "./i18n.js";
 import { initSidebar } from "./sidebar.js";
 import { injectGlyphs } from "./glyphs.js";
-import { getMods, getArcanes, getShards, getLastFetchError } from "./inventory/data.js";
+import { getMods, getArcanes, getShards, getLastFetchError, getBundleAge } from "./inventory/data.js";
+import { CacheBus } from "./cache-bus.js";
+import { renderDataAge } from "./sections/data-age.js";
 import {
   buildModCard, buildArcaneCard, buildShardCard,
   filterMods, filterArcanes, filterShards,
@@ -57,11 +59,22 @@ async function loadData(lang, { force = false } = {}) {
   ]);
   data = { mods, arcanes, shards };
 
+  const hasData = filters.kind === "mods" ? mods.length
+                : filters.kind === "arcanes" ? arcanes.length
+                : shards.length;
   const err = filters.kind === "mods"    ? getLastFetchError("mods", lang)
             : filters.kind === "arcanes" ? getLastFetchError("arcanes", lang)
             : null;
-  if (err) { showInventoryError(err); return; }
+  if (err && !hasData) { showInventoryError(err); return; }
   rerender();
+  updateAgeBadge(lang);
+}
+
+async function updateAgeBadge(lang) {
+  const el = $("#inv-age");
+  if (!el || filters.kind === "shards") { if (el) el.hidden = true; return; }
+  const age = await getBundleAge(filters.kind, lang);
+  renderDataAge(el, age, "bundle");
 }
 
 function showInventoryError(err) {
@@ -321,6 +334,16 @@ async function bootstrap() {
     setupHandlers();
     setupFilterSheet();
     syncUi();
+
+    CacheBus.addEventListener("mods-updated", (e) => {
+      if (e.detail.lang !== getLang()) return;
+      loadData(getLang());
+    });
+    CacheBus.addEventListener("arcanes-updated", (e) => {
+      if (e.detail.lang !== getLang()) return;
+      loadData(getLang());
+    });
+
     await loadData(getLang());
   } catch (err) {
     console.error("[VW] inventory bootstrap failed:", err);

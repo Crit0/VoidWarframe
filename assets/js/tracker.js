@@ -2,6 +2,8 @@ import { CONFIG } from "./config.js";
 import { initI18n, applyI18n, setLang, getLang, onLangChange, t } from "./i18n.js";
 import { getWorldstate } from "./api.js";
 import { getItemsDict } from "./items.js";
+import { CacheBus } from "./cache-bus.js";
+import { renderDataAge } from "./sections/data-age.js";
 import { initSidebar } from "./sidebar.js";
 import { initReveal } from "./animations.js";
 import { injectGlyphs } from "./glyphs.js";
@@ -180,10 +182,12 @@ function renderSkeletons() {
 async function loadAndRender(force = false) {
   if (force) renderSkeletons();
   try {
-    const { data, stale } = await getWorldstate(getLang(), { force });
+    const { data, stale, source, ageMs } = await getWorldstate(getLang(), { force });
     lastData = data;
     setServerStatus(stale ? "stale" : "ok");
     renderAll();
+    const ageEl = $("#tracker-stale");
+    if (ageEl) renderDataAge(ageEl, ageMs, source);
   } catch (err) {
     console.error("[VW] tracker fetch failed:", (err && err.message) || String(err));
     setServerStatus("error");
@@ -232,6 +236,10 @@ async function bootstrap() {
     onSettingsChange(() => {
       clearTimeout(renderDebounce);
       renderDebounce = setTimeout(() => { if (lastData) renderAll(); }, 50);
+    });
+    CacheBus.addEventListener("worldstate-updated", (e) => {
+      if (e.detail.lang !== getLang()) return;
+      loadAndRender();
     });
     await loadAndRender();
     prefetchItems();
