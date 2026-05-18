@@ -1,155 +1,34 @@
-import { CONFIG } from "../config.js";
-import { loadBundle, bundleAgeMs } from "../bundle.js";
-import { CacheBus } from "../cache-bus.js";
-import { slimMod } from "./slim-mod.js";
+import { getLatest, refresh, ApiEvents } from "../api/index.js";
+import { bundleTs } from "../api/bundle.js";
 
-/* Inventory data sources — mods + arcanes + shards.
-   3-tier loading: localStorage (instant) → bundle (local file) → API (network).
-   Whichever resolves first is returned; API always refreshes in background and
-   emits CacheBus events when fresh data arrives. */
+/* Inventory data sources — mods, arcanes (via api/) + static archon shards. */
 
-const MODS_TTL_MS  = 7 * 24 * 3600 * 1000;
-const VERSION = 2;
-const memCache = new Map();
-const inflight = new Map();
-const lastError = new Map();
+const errors = new Map(); // `${kind}_${lang}` → Error|null
+
+ApiEvents.addEventListener("mods:failed",    (e) => errors.set(`mods_${e.detail.lang}`, e.detail));
+ApiEvents.addEventListener("arcanes:failed", (e) => errors.set(`arcanes_${e.detail.lang}`, e.detail));
+ApiEvents.addEventListener("mods:updated",   (e) => errors.delete(`mods_${e.detail.lang}`));
+ApiEvents.addEventListener("arcanes:updated",(e) => errors.delete(`arcanes_${e.detail.lang}`));
 
 export function getLastFetchError(kind, lang) {
-  return lastError.get(`${kind}_${lang}`) || null;
+  return errors.get(`${kind}_${lang}`) || null;
 }
 
-function cacheKey(kind, lang) { return `vw_${kind}_${lang}_v${VERSION}`; }
-
-function readCache(kind, lang) {
-  try {
-    const raw = localStorage.getItem(cacheKey(kind, lang));
-    if (!raw) return null;
-    const { ts, data } = JSON.parse(raw);
-    if (Date.now() - ts > MODS_TTL_MS) return null;
-    return data;
-  } catch { return null; }
+export async function getMods(lang, opts = {}) {
+  if (opts.force) await refresh("mods", lang);
+  const r = await getLatest("mods", lang);
+  return r.data;
 }
 
-function writeCache(kind, lang, data) {
-  try {
-    localStorage.setItem(cacheKey(kind, lang), JSON.stringify({ ts: Date.now(), data }));
-  } catch (e) { console.warn(`[VW] ${kind} cache write failed:`, e && e.message); }
-}
-
-function emit(kind, lang, source) {
-  CacheBus.dispatchEvent(new CustomEvent(`${kind}-updated`, { detail: { lang, source } }));
-}
-
-async function fetchFromApi(kind, url) {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  return Array.isArray(data) ? data : [];
-}
-
-function bundleApply(kind, arr) {
-  // mods bundles are pre-slimmed by scripts/slim-mods.mjs.
-  // If the bundle accidentally contains raw entries (with levelStats), re-slim defensively.
-  if (kind !== "mods") return arr;
-  if (!arr.length) return arr;
-  const first = arr[0];
-  if (first && first.maxStats !== undefined) return arr;
-  return arr.map(slimMod);
-}
-
-async function fetchOnce(kind, url, lang, transform, { force = false } = {}) {
-  const memKey = `${kind}_${lang}`;
-
-  if (force) { memCache.delete(memKey); inflight.delete(memKey); }
-  if (memCache.has(memKey)) {
-    refreshFromApi(kind, url, lang, transform);
-    return memCache.get(memKey);
-  }
-  if (inflight.has(memKey)) return inflight.get(memKey);
-
-  const p = (async () => {
-    // 1) localStorage
-    const local = readCache(kind, lang);
-    if (local && local.length) {
-      memCache.set(memKey, local);
-      refreshFromApi(kind, url, lang, transform);
-      return local;
-    }
-    // 2) bundle
-    const raw = await loadBundle(kind, lang);
-    if (raw && Array.isArray(raw) && raw.length) {
-      const arr = bundleApply(kind, raw);
-      memCache.set(memKey, arr);
-      writeCache(kind, lang, arr);
-      emit(kind, lang, "bundle");
-      refreshFromApi(kind, url, lang, transform);
-      return arr;
-    }
-    // 3) API
-    try {
-      const apiData = await fetchFromApi(kind, url);
-      const arr = transform ? apiData.map(transform) : apiData;
-      memCache.set(memKey, arr);
-      writeCache(kind, lang, arr);
-      lastError.delete(memKey);
-      emit(kind, lang, "api");
-      return arr;
-    } catch (err) {
-      const msg = (err && err.message) || String(err);
-      console.warn(`[VW] ${kind} fetch failed:`, url, msg);
-      lastError.set(memKey, err);
-      memCache.set(memKey, []);
-      return [];
-    } finally {
-      inflight.delete(memKey);
-    }
-  })();
-  inflight.set(memKey, p);
-  return p;
-}
-
-function refreshFromApi(kind, url, lang, transform) {
-  const memKey = `${kind}_${lang}`;
-  // Don't refresh if there's already a refresh inflight, or if a fetch finished
-  // less than 60 sec ago (debounce).
-  if (inflight.has(`refresh_${memKey}`)) return;
-  const last = lastFetchAt.get(memKey) || 0;
-  if (Date.now() - last < 60 * 1000) return;
-
-  const p = (async () => {
-    try {
-      const apiData = await fetchFromApi(kind, url);
-      const arr = transform ? apiData.map(transform) : apiData;
-      memCache.set(memKey, arr);
-      writeCache(kind, lang, arr);
-      lastError.delete(memKey);
-      lastFetchAt.set(memKey, Date.now());
-      emit(kind, lang, "api");
-    } catch (err) {
-      const msg = (err && err.message) || String(err);
-      console.warn(`[VW] ${kind} refresh failed:`, url, msg);
-      lastError.set(memKey, err);
-    } finally {
-      inflight.delete(`refresh_${memKey}`);
-    }
-  })();
-  inflight.set(`refresh_${memKey}`, p);
-}
-
-const lastFetchAt = new Map();
-
-export function getMods(lang, opts) {
-  const url = `${CONFIG.API_BASE}/mods?language=${lang}&only=name,uniqueName,imageName,description,polarity,baseDrain,fusionLimit,type,rarity,compatName,isAugment,levelStats,incompatibleMods,transmutable,availability,wikiaUrl`;
-  return fetchOnce("mods", url, lang, slimMod, opts);
-}
-
-export function getArcanes(lang, opts) {
-  const url = `${CONFIG.API_BASE}/arcanes?language=${lang}`;
-  return fetchOnce("arcanes", url, lang, undefined, opts);
+export async function getArcanes(lang, opts = {}) {
+  if (opts.force) await refresh("arcanes", lang);
+  const r = await getLatest("arcanes", lang);
+  return r.data;
 }
 
 export async function getBundleAge(kind, lang) {
-  return bundleAgeMs(kind, lang);
+  const ts = await bundleTs(kind, lang);
+  return ts == null ? null : Date.now() - ts;
 }
 
 /* ============== Archon shards (static catalog) ============== */

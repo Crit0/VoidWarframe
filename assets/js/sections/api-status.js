@@ -1,4 +1,4 @@
-import { CacheBus } from "../cache-bus.js";
+import { ApiEvents } from "../api/index.js";
 import { t, onLangChange } from "../i18n.js";
 
 let pillEl = null;
@@ -15,20 +15,28 @@ function applyState(s) {
 
 function fromSource(source) {
   if (source === "api") return "live";
-  if (source === "session" || source === "session-old") return "stale";
+  if (source === "memory" || source === "storage") return "stale";
   if (source === "bundle") return "offline";
+  if (source === "empty") return "offline";
   return "loading";
 }
 
 export function mountApiStatus(container) {
-  if (!container) return;
-  pillEl = document.createElement("div");
-  pillEl.className = "api-status api-status--loading";
-  pillEl.innerHTML = `<span class="api-status__dot" aria-hidden="true"></span><span class="api-status__text">…</span>`;
-  container.appendChild(pillEl);
-  applyState("loading");
+  try {
+    if (!container) return;
+    if (container.querySelector(".api-status")) return; // already mounted
+    pillEl = document.createElement("div");
+    pillEl.className = "api-status api-status--loading";
+    pillEl.innerHTML = `<span class="api-status__dot" aria-hidden="true"></span><span class="api-status__text">…</span>`;
+    container.appendChild(pillEl);
+    applyState("loading");
 
-  CacheBus.addEventListener("worldstate-updated", (e) => applyState(fromSource(e.detail.source)));
-  CacheBus.addEventListener("worldstate-failed", () => applyState("offline"));
-  onLangChange(() => applyState(state));
+    for (const k of ["worldstate", "mods", "arcanes", "items"]) {
+      ApiEvents.addEventListener(`${k}:updated`, (e) => applyState(fromSource(e.detail.source)));
+    }
+    ApiEvents.addEventListener("worldstate:failed", () => applyState("offline"));
+    onLangChange(() => applyState(state));
+  } catch (err) {
+    console.warn("[VW] mountApiStatus failed:", (err && err.message) || String(err));
+  }
 }

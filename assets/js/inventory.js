@@ -335,7 +335,7 @@ async function bootstrap() {
     applyI18n();
     setupHandlers();
     setupFilterSheet();
-    mountApiStatus(document.querySelector(".header__lang"));
+    try { mountApiStatus(document.querySelector(".header__lang")); } catch (e) { console.warn(e); }
     syncUi();
 
     CacheBus.addEventListener("mods-updated", (e) => {

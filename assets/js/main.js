@@ -91,13 +91,13 @@ async function bootstrap() {
     setupSmoothCtas();
     initHeroCanvas();
     initReveal();
-    mountApiStatus(document.querySelector(".header__lang"));
+    try { mountApiStatus(document.querySelector(".header__lang")); } catch (e) { console.warn(e); }
     CacheBus.addEventListener("worldstate-updated", (e) => {
       if (e.detail.lang !== getLang()) return;
       loadAndRender();
     });
     loadAndRender();
-    startWorldstatePolling();
+    try { startWorldstatePolling(); } catch (e) { console.warn(e); }
   } catch (err) {
     console.error("[VW] home bootstrap failed:", err);
     showFatal(err);

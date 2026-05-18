@@ -1,33 +1,9 @@
+/* Backwards-compatible items dictionary using new api/ layer. */
+
 import { CONFIG } from "./config.js";
-import { loadBundle } from "./bundle.js";
-import { CacheBus } from "./cache-bus.js";
+import { getItemsLatest, refresh, ApiEvents } from "./api/index.js";
 
-/* Items dictionary: lookup table for localised name + CDN icon.
-   3-tier loading: localStorage → bundle → API. */
-
-const VERSION = 1;
-const memCache = new Map();      // lang → built dict
-let inflight = new Map();        // lang → Promise
-
-function cacheKey(lang) { return `vw_items_${lang}_v${VERSION}`; }
-
-function readCache(lang) {
-  try {
-    const raw = localStorage.getItem(cacheKey(lang));
-    if (!raw) return null;
-    const { ts, data } = JSON.parse(raw);
-    if (Date.now() - ts > CONFIG.ITEMS_TTL_MS) return null;
-    return data;
-  } catch { return null; }
-}
-
-function writeCache(lang, data) {
-  try {
-    localStorage.setItem(cacheKey(lang), JSON.stringify({ ts: Date.now(), data }));
-  } catch (e) {
-    console.warn("[VW] items cache write failed (quota?):", e.message);
-  }
-}
+const dictCache = new Map(); // lang → built dict (Map indices)
 
 function buildIndex(arr) {
   const byUnique = new Map();
@@ -52,76 +28,19 @@ function buildIndex(arr) {
   };
 }
 
-const refreshDebounce = new Map();
-
-async function fetchFromApi(lang) {
-  const url = `${CONFIG.API_BASE}/items?language=${lang}&only=name,uniqueName,imageName,category,description,wikiaUrl,tradable,type`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  return Array.isArray(data) ? data : [];
-}
-
-function refreshInBackground(lang) {
-  const last = refreshDebounce.get(lang) || 0;
-  if (Date.now() - last < 60 * 1000) return;
-  refreshDebounce.set(lang, Date.now());
-  fetchFromApi(lang)
-    .then((arr) => {
-      writeCache(lang, arr);
-      memCache.set(lang, buildIndex(arr));
-      CacheBus.dispatchEvent(new CustomEvent("items-updated", { detail: { lang, source: "api" } }));
-    })
-    .catch((err) => {
-      console.warn("[VW] items dict refresh failed:", (err && err.message) || String(err));
-    });
-}
-
 export async function getItemsDict(lang) {
-  if (memCache.has(lang)) {
-    refreshInBackground(lang);
-    return memCache.get(lang);
-  }
-  if (inflight.has(lang)) return inflight.get(lang);
-
-  const cached = readCache(lang);
-  if (cached) {
-    const dict = buildIndex(cached);
-    memCache.set(lang, dict);
-    refreshInBackground(lang);
-    return dict;
-  }
-
-  const url = `${CONFIG.API_BASE}/items?language=${lang}&only=name,uniqueName,imageName,category,description,wikiaUrl,tradable,type`;
-  const p = (async () => {
-    // Try bundle first (local, fast)
-    const bundle = await loadBundle("items", lang);
-    if (bundle && Array.isArray(bundle) && bundle.length) {
-      writeCache(lang, bundle);
-      const dict = buildIndex(bundle);
-      memCache.set(lang, dict);
-      refreshInBackground(lang);
-      return dict;
-    }
-    // Fall back to API
-    try {
-      const arr = await fetchFromApi(lang);
-      writeCache(lang, arr);
-      const dict = buildIndex(arr);
-      memCache.set(lang, dict);
-      return dict;
-    } catch (err) {
-      console.warn("[VW] items dict fetch failed:", url, (err && err.message) || String(err));
-      const empty = buildIndex([]);
-      memCache.set(lang, empty);
-      return empty;
-    } finally {
-      inflight.delete(lang);
-    }
-  })();
-  inflight.set(lang, p);
-  return p;
+  if (dictCache.has(lang)) return dictCache.get(lang);
+  const { data } = await getItemsLatest(lang);
+  const dict = buildIndex(Array.isArray(data) ? data : []);
+  dictCache.set(lang, dict);
+  return dict;
 }
+
+// Rebuild dictionary when items refreshed from API.
+ApiEvents.addEventListener("items:updated", (e) => {
+  const lang = e.detail.lang;
+  dictCache.delete(lang);
+});
 
 export function itemImageUrl(itemEntry) {
   if (!itemEntry) return null;

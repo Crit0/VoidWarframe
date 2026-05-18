@@ -250,10 +250,10 @@ async function bootstrap() {
       if (e.detail.lang !== getLang()) return;
       loadAndRender();
     });
-    mountApiStatus($(".header__lang"));
+    try { mountApiStatus($(".header__lang")); } catch (e) { console.warn(e); }
     await loadAndRender();
     prefetchItems();
-    startWorldstatePolling();
+    try { startWorldstatePolling(); } catch (e) { console.warn(e); }
   } catch (err) {
     console.error("[VW] tracker bootstrap failed:", err);
     showFatal(err);
