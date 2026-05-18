@@ -84,6 +84,31 @@
       "fromBundle": "Offline mode"
     }
   },
+  "apiStatus": {
+    "live":    "Live",
+    "stale":   "Cached",
+    "offline": "Offline",
+    "loading": "…",
+    "liveTip":    "Live data from the API",
+    "staleTip":   "Cached data, API is not responding",
+    "offlineTip": "API unavailable, showing offline data",
+    "loadingTip": "Connecting to API…"
+  },
+  "syndicates": {
+    "title":   "Syndicate missions",
+    "subtitle": "Active syndicate jobs · refreshed daily",
+    "empty":   "No syndicate missions"
+  },
+  "calendar": {
+    "title":   "Calendar",
+    "subtitle": "Schedule of events & activities",
+    "empty":   "No active events"
+  },
+  "upgrades": {
+    "title":   "Active bonuses",
+    "subtitle": "Global modifiers & boosters",
+    "empty":   "No active bonuses"
+  },
   "footer": {
     "copy": "© 2026 Voide Warframe — unofficial fan site. Warframe® is a trademark of Digital Extremes Ltd.",
     "api": "Data by",

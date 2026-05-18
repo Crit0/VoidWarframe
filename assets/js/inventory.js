@@ -4,6 +4,8 @@ import { injectGlyphs } from "./glyphs.js";
 import { getMods, getArcanes, getShards, getLastFetchError, getBundleAge } from "./inventory/data.js";
 import { CacheBus } from "./cache-bus.js";
 import { renderDataAge } from "./sections/data-age.js";
+import { mountApiStatus } from "./sections/api-status.js";
+import "./sw-register.js";
 import {
   buildModCard, buildArcaneCard, buildShardCard,
   filterMods, filterArcanes, filterShards,
@@ -333,6 +335,7 @@ async function bootstrap() {
     applyI18n();
     setupHandlers();
     setupFilterSheet();
+    mountApiStatus(document.querySelector(".header__lang"));
     syncUi();
 
     CacheBus.addEventListener("mods-updated", (e) => {

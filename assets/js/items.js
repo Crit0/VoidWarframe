@@ -55,7 +55,7 @@ function buildIndex(arr) {
 const refreshDebounce = new Map();
 
 async function fetchFromApi(lang) {
-  const url = `${CONFIG.API_BASE}/items?language=${lang}&only=name,uniqueName,imageName`;
+  const url = `${CONFIG.API_BASE}/items?language=${lang}&only=name,uniqueName,imageName,category,description,wikiaUrl,tradable,type`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
@@ -92,7 +92,7 @@ export async function getItemsDict(lang) {
     return dict;
   }
 
-  const url = `${CONFIG.API_BASE}/items?language=${lang}&only=name,uniqueName,imageName`;
+  const url = `${CONFIG.API_BASE}/items?language=${lang}&only=name,uniqueName,imageName,category,description,wikiaUrl,tradable,type`;
   const p = (async () => {
     // Try bundle first (local, fast)
     const bundle = await loadBundle("items", lang);

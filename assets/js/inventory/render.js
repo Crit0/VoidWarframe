@@ -58,6 +58,7 @@ export function buildModCard(mod) {
       </div>
       ${statsList(mod)}
       ${desc ? `<p class="inv-card__desc">${escapeHtml(desc)}</p>` : ""}
+      ${mod.wikiaUrl ? `<a class="inv-card__wiki" href="${escapeHtml(mod.wikiaUrl)}" target="_blank" rel="noopener" title="Wiki"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h7v7M21 3l-9 9M19 14v6a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h6"/></svg>Wiki</a>` : ""}
     </div>
     <button type="button" class="inv-card__toggle" aria-pressed="${owned}" data-toggle>
       <svg viewBox="0 0 24 24" aria-hidden="true">${owned

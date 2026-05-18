@@ -139,7 +139,7 @@ function refreshFromApi(kind, url, lang, transform) {
 const lastFetchAt = new Map();
 
 export function getMods(lang, opts) {
-  const url = `${CONFIG.API_BASE}/mods?language=${lang}&only=name,uniqueName,imageName,description,polarity,baseDrain,fusionLimit,type,rarity,compatName,isAugment,levelStats`;
+  const url = `${CONFIG.API_BASE}/mods?language=${lang}&only=name,uniqueName,imageName,description,polarity,baseDrain,fusionLimit,type,rarity,compatName,isAugment,levelStats,incompatibleMods,transmutable,availability,wikiaUrl`;
   return fetchOnce("mods", url, lang, slimMod, opts);
 }
 

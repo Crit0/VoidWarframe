@@ -4,7 +4,10 @@ import { initSidebar } from "./sidebar.js";
 import { initReveal, initHeroCanvas } from "./animations.js";
 import { getWorldstate } from "./api.js";
 import { CacheBus } from "./cache-bus.js";
+import { startWorldstatePolling } from "./poll.js";
+import { mountApiStatus } from "./sections/api-status.js";
 import { injectGlyphs } from "./glyphs.js";
+import "./sw-register.js";
 import {
   renderNews,
   renderNewsSkeletons,
@@ -88,11 +91,13 @@ async function bootstrap() {
     setupSmoothCtas();
     initHeroCanvas();
     initReveal();
+    mountApiStatus(document.querySelector(".header__lang"));
     CacheBus.addEventListener("worldstate-updated", (e) => {
       if (e.detail.lang !== getLang()) return;
       loadAndRender();
     });
     loadAndRender();
+    startWorldstatePolling();
   } catch (err) {
     console.error("[VW] home bootstrap failed:", err);
     showFatal(err);

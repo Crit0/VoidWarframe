@@ -388,6 +388,24 @@ body.body-lock { overflow: hidden; }
   overflow-wrap: anywhere;
 }
 
+.inv-card__wiki {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius);
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  width: max-content;
+}
+.inv-card__wiki:hover { background: rgba(245, 196, 99, 0.08); }
+
 .inv-card__toggle {
   display: flex;
   align-items: center;

@@ -338,6 +338,36 @@
 .data-age--old     { color: var(--neon-red);   border: 1px solid currentColor; background: rgba(255, 51, 85, 0.06); }
 .data-age__icon    { font-size: 0.95em; opacity: 0.7; }
 
+/* ===== API status pill ===== */
+.api-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  user-select: none;
+}
+.api-status__dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+.api-status--live    { color: #4ade80; background: rgba(74, 222, 128, 0.08); }
+.api-status--stale   { color: var(--neon-amber); background: rgba(255, 176, 32, 0.08); }
+.api-status--offline { color: var(--neon-red);   background: rgba(255, 51, 85, 0.08); }
+.api-status--loading { color: var(--text-2); background: rgba(255, 255, 255, 0.04); }
+.api-status--live .api-status__dot { animation: api-pulse 2s ease-in-out infinite; }
+@keyframes api-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@media (max-width: 640px) {
+  .api-status__text { display: none; }
+  .api-status { padding: 0.35rem; }
+}
+
 /* ===== About strip ===== */
 .about {
   display: grid;

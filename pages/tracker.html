@@ -7,8 +7,17 @@
     <title>Voide Warframe — Трэкер</title>
     <meta name="description" content="Трекер событий Warframe в реальном времени с учётом вашего часового пояса." />
     <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg" />
+    <link rel="manifest" href="../manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="//api.warframestat.us" />
+    <link rel="dns-prefetch" href="//cdn.warframestat.us" />
+    <link rel="preconnect" href="https://api.warframestat.us" crossorigin />
+    <link rel="preconnect" href="https://cdn.warframestat.us" />
+    <link rel="preload" href="../assets/data/worldstate.ru.json" as="fetch" type="application/json" crossorigin />
+    <link rel="modulepreload" href="../assets/js/tracker.js" />
+    <link rel="modulepreload" href="../assets/js/api.js" />
+    <link rel="modulepreload" href="../assets/js/poll.js" />
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap&subset=cyrillic,cyrillic-ext,latin,latin-ext" rel="stylesheet" />
     <link rel="stylesheet" href="../assets/css/main.css" />
   </head>
@@ -168,6 +177,27 @@
               <h2 class="section__title-v2" data-i18n="tracker.sections.traders">Торговцы</h2>
             </div>
             <div class="grid" id="traders-grid"></div>
+          </section>
+
+          <section class="section section--tracker" id="section-syndicates">
+            <div class="section__head reveal">
+              <h2 class="section__title-v2" data-i18n="syndicates.title">Задания синдикатов</h2>
+            </div>
+            <div class="grid" id="syndicates-grid"></div>
+          </section>
+
+          <section class="section section--tracker" id="section-upgrades">
+            <div class="section__head reveal">
+              <h2 class="section__title-v2" data-i18n="upgrades.title">Активные бонусы</h2>
+            </div>
+            <div class="grid" id="upgrades-grid"></div>
+          </section>
+
+          <section class="section section--tracker" id="section-calendar">
+            <div class="section__head reveal">
+              <h2 class="section__title-v2" data-i18n="calendar.title">Календарь</h2>
+            </div>
+            <div class="grid" id="calendar-grid"></div>
           </section>
 
           <footer class="footer section--tracker" style="text-align:center">

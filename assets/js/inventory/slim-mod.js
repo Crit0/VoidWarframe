@@ -15,5 +15,9 @@ export function slimMod(m) {
     compatName: m.compatName,
     isAugment: m.isAugment,
     maxStats: ls,
+    incompatibleMods: Array.isArray(m.incompatibleMods) ? m.incompatibleMods : [],
+    transmutable: m.transmutable !== false,
+    availability: m.availability || null,
+    wikiaUrl: m.wikiaUrl || null,
   };
 }

@@ -21,6 +21,12 @@ import * as Live from "./tracker/sections/live.js";
 import * as Nightwave from "./tracker/sections/nightwave.js";
 import * as Traders from "./tracker/sections/traders.js";
 import * as Recommended from "./tracker/sections/recommended.js";
+import * as Syndicates from "./tracker/sections/syndicates.js";
+import * as Calendar from "./tracker/sections/calendar.js";
+import * as Upgrades from "./tracker/sections/upgrades.js";
+import { startWorldstatePolling } from "./poll.js";
+import { mountApiStatus } from "./sections/api-status.js";
+import "./sw-register.js";
 
 let lastData = null;
 let lastStatus = "ok"; // ok | stale | error
@@ -145,6 +151,9 @@ function renderAll() {
   Live.renderLive($("#live-grid"), lastData, ctx);
   Nightwave.renderNightwave($("#nightwave-grid"), lastData, ctx);
   Traders.renderTraders($("#traders-grid"), lastData, ctx);
+  Syndicates.render($("#syndicates-grid"), lastData.syndicateMissions);
+  Upgrades.render($("#upgrades-grid"), lastData.globalUpgrades);
+  Calendar.render($("#calendar-grid"), lastData);
   updateTabCounts();
   applyTabVisibility();
   applyI18n();
@@ -241,8 +250,10 @@ async function bootstrap() {
       if (e.detail.lang !== getLang()) return;
       loadAndRender();
     });
+    mountApiStatus($(".header__lang"));
     await loadAndRender();
     prefetchItems();
+    startWorldstatePolling();
   } catch (err) {
     console.error("[VW] tracker bootstrap failed:", err);
     showFatal(err);

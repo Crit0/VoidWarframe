@@ -16,7 +16,8 @@ fetch() {
   mv "$dest.tmp" "$dest"
 }
 
-MODS_FIELDS="name,uniqueName,imageName,description,polarity,baseDrain,fusionLimit,type,rarity,compatName,isAugment,levelStats"
+MODS_FIELDS="name,uniqueName,imageName,description,polarity,baseDrain,fusionLimit,type,rarity,compatName,isAugment,levelStats,incompatibleMods,transmutable,availability,wikiaUrl"
+ITEMS_FIELDS="name,uniqueName,imageName,category,description,wikiaUrl,tradable,type"
 
 for L in ru en; do
   fetch "$BASE/$PLATFORM/?language=$L"              "$OUT/worldstate.$L.json"
@@ -24,7 +25,7 @@ for L in ru en; do
   node scripts/slim-mods.mjs "$OUT/mods.$L.raw.json" "$OUT/mods.$L.json"
   rm "$OUT/mods.$L.raw.json"
   fetch "$BASE/arcanes?language=$L"                 "$OUT/arcanes.$L.json"
-  fetch "$BASE/items?language=$L&only=name,uniqueName,imageName" "$OUT/items.$L.json"
+  fetch "$BASE/items?language=$L&only=$ITEMS_FIELDS" "$OUT/items.$L.json"
 done
 
 node scripts/build-manifest.mjs "$OUT"
