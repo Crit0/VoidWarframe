@@ -1,0 +1,18 @@
+{
+  "name": "voidwarframe",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Voide Warframe — неофициальный фан-сайт по Warframe",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/crit0/voidwarframe.git"
+  },
+  "license": "UNLICENSED"
+}

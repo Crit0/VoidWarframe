@@ -1,0 +1,6 @@
+.git
+.github
+scripts
+*.zip
+*.md
+README.md
