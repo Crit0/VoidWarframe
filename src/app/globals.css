@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-ink text-text-1 font-body antialiased;
+    background-image:
+      radial-gradient(ellipse at top, rgba(0, 240, 255, 0.05), transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(255, 43, 214, 0.05), transparent 55%);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3 {
+    @apply font-display tracking-wider text-text-0;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply rounded-lg border border-border bg-panel/80 backdrop-blur;
+  }
+
+  .panel-gold {
+    @apply rounded-lg border border-border-gold bg-panel/80 backdrop-blur;
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-2 rounded-md border border-border-gold
+           bg-panel-light px-4 py-2 font-mono text-sm uppercase tracking-widest
+           text-gold transition-all hover:bg-gold hover:text-ink;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-md border border-border
+           bg-panel-light px-2 py-1 font-mono text-xs text-text-1;
+  }
+
+  .section-title {
+    @apply font-display text-lg uppercase tracking-[0.2em] text-gold;
+  }
+}
+
+/* thin neon scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #05070d; }
+::-webkit-scrollbar-thumb {
+  background: #1f2738;
+  border-radius: 6px;
+  border: 2px solid #05070d;
+}
+::-webkit-scrollbar-thumb:hover { background: #2d3850; }

@@ -1,137 +1,146 @@
 # Voide Warframe
 
-Фан-сайт по игре **Warframe** с живыми данными от [api.warframestat.us](https://docs.warframestat.us/). Полностью статический — собран на чистом HTML, CSS и ES-модулях, без сборщика.
+Full-stack веб-платформа сообщества Warframe: трекер мирового состояния,
+каталог модов, AI-ассистент, хранилище файлов.
 
-> A community fan site for **Warframe**, powered by [api.warframestat.us](https://docs.warframestat.us/). Pure static — HTML, CSS, ES modules. No build step.
+## Стек
 
----
+| Слой | Технология |
+|------|-----------|
+| Фреймворк | Next.js 15 (App Router) |
+| Язык | TypeScript |
+| UI | React 19 + Tailwind CSS |
+| База данных | PostgreSQL |
+| ORM | Prisma 6 |
+| Внешние API | api.warframestat.us (серверный кэш) |
+| AI | Anthropic / OpenAI (через абстракцию) |
+| Хостинг | Railway (Docker) |
 
-## Быстрый старт / Quick start
-
-Файлы загружаются через `fetch()` (i18n JSON), поэтому открывать `index.html` напрямую (через `file://`) не получится — нужен любой локальный HTTP-сервер.
-
-```bash
-# Python (есть в любой Linux/macOS)
-python3 -m http.server 8000
-
-# Node
-npx serve .
-
-# или PHP
-php -S localhost:8000
-```
-
-Открыть `http://localhost:8000`.
-
----
-
-## Деплой / Deploy
-
-Это статика — любой хостинг подойдёт.
-
-- **ClaudeFrame Free** — загрузить содержимое папки целиком (с `index.html` в корне).
-- **GitHub Pages** — в репо → `Settings` → `Pages` → `Source: main / root`.
-- **Netlify Drop** — перетащить папку в [app.netlify.com/drop](https://app.netlify.com/drop).
-- **Cloudflare Pages / Vercel** — подключить репо, build command оставить пустым, output `/`.
-
----
-
-## Структура
+## Структура проекта
 
 ```
 .
-├── index.html               # Главная страница
-├── README.md
-├── assets/
-│   ├── css/
-│   │   ├── tokens.css       # CSS-переменные: цвета, шрифты, glow
-│   │   ├── reset.css        # Минимальный reset
-│   │   ├── layout.css       # Сайдбар + grid + адаптив
-│   │   ├── components.css   # Карточки, кнопки, скелетоны
-│   │   ├── animations.css   # @keyframes и reveal-on-scroll
-│   │   ├── tracker.css      # Стили трекера (чипы, циклы, торговцы)
-│   │   └── main.css         # @import всего выше
-│   ├── js/
-│   │   ├── config.js        # API URL, TTL кэша, языки, настройки трекера
-│   │   ├── i18n.js          # Переводы (data-i18n атрибуты)
-│   │   ├── api.js           # fetch + sessionStorage кэш worldstate
-│   │   ├── sidebar.js       # Гамбургер, навигация, тосты «Скоро»
-│   │   ├── animations.js    # Hero canvas + IntersectionObserver
-│   │   ├── main.js          # Точка входа главной
-│   │   ├── tracker.js       # Точка входа трекера
-│   │   ├── sections/        # Секции главной (news, alerts)
-│   │   └── tracker/         # Модули трекера
-│   │       ├── settings.js  # Настройки + localStorage + UI
-│   │       ├── format.js    # Локальное время + единый тикер
-│   │       ├── recommend.js # Оценочная длительность + ценность дропа
-│   │       └── sections/    # cycles, activities, fissures, live, nightwave, traders, recommended
-│   ├── i18n/
-│   │   ├── ru.json          # Русские строки (по умолчанию)
-│   │   └── en.json          # Английские строки
-│   └── img/
-│       ├── favicon.svg
-│       └── logo.svg
-└── pages/
-    └── tracker.html         # Трекер событий и торговцев
+├── prisma/
+│   ├── schema.prisma        # схема БД (User, FileUpload, AiConversation, ApiCache…)
+│   └── seed.ts              # демо-данные
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx       # корневой layout (Sidebar + BottomNav)
+│   │   ├── page.tsx         # главная (worldstate)
+│   │   ├── tracker/         # трекер событий (live)
+│   │   ├── inventory/       # каталог модов
+│   │   ├── wiki/            # заглушка «в разработке»
+│   │   ├── builder/         # заглушка «в разработке»
+│   │   ├── ai/              # AI-ассистент
+│   │   ├── files/           # загрузка файлов
+│   │   └── api/             # route handlers (backend)
+│   │       ├── health/      # healthcheck для Railway
+│   │       ├── worldstate/  # прокси Warframe API
+│   │       ├── mods/ arcanes/ items/
+│   │       ├── ai/          # AI-чат
+│   │       ├── upload/      # загрузка файлов
+│   │       └── files/[id]/  # отдача / удаление файла
+│   ├── components/          # переиспользуемый UI
+│   ├── lib/                 # prisma, env, cache, warframe, ai, uploads
+│   └── types/               # TypeScript-типы
+├── Dockerfile               # multi-stage сборка для Railway
+├── docker-compose.yml       # локальный Postgres + app
+├── railway.json             # конфигурация Railway
+└── .env.example             # шаблон переменных окружения
 ```
 
----
+## Локальный запуск
 
-## Как добавить страницу
+### 1. Зависимости
 
-1. Скопировать `index.html` в `pages/wiki.html`.
-2. Поменять пути ассетов на относительные (`../assets/...`).
-3. Заменить содержимое `<main>` на новую страницу.
-4. В `index.html` (и других страницах) убрать `data-placeholder` с соответствующего пункта меню — клик начнёт работать.
-
-## Как добавить ключ перевода
-
-Добавить ключ одновременно в `assets/i18n/ru.json` и `assets/i18n/en.json`, в HTML использовать:
-
-```html
-<h2 data-i18n="my.key">fallback text</h2>
-<button data-i18n-attr="aria-label:my.key">…</button>
+```bash
+npm install
 ```
 
-Поддерживается интерполяция `t("greet", { name: "Tenno" })` → строка `"Привет, {name}"`.
+### 2. База данных
 
-## Как добавить язык
+Поднять PostgreSQL через Docker:
 
-1. Создать `assets/i18n/<code>.json` (скопировать `en.json`, перевести).
-2. В `assets/js/config.js` добавить код в `SUPPORTED_LANGS`.
-3. В `index.html` (шапка) добавить кнопку:
-   ```html
-   <button type="button" data-lang="uk" aria-pressed="false">UK</button>
-   ```
-
----
-
-## API
-
-Сайт использует **WarframeStatus API** — открытый, без авторизации, с CORS.
-
-Один запрос на главной:
-
-```
-GET https://api.warframestat.us/pc?language=ru
+```bash
+docker compose up -d db
 ```
 
-Возвращает разом: `news`, `alerts`, `events`, циклы Cetus / Earth / Vallis / Cambion / Duviri / Zariman, sortie, Nightwave, Baro и т.д. Ответы кэшируются в `sessionStorage` на 60 секунд. При сетевой ошибке отображается устаревший кэш с пометкой, иначе — карточка с кнопкой «Повторить».
+### 3. Переменные окружения
 
-Документация: <https://docs.warframestat.us/>.
+```bash
+cp .env.example .env
+```
 
----
+Для локального Docker-Postgres `DATABASE_URL` уже подходит из коробки.
 
-## Что в планах
+### 4. Миграции и генерация клиента
 
-- [x] Главная — hero, новости, активные события, переключение языков
-- [x] **Трекер** — циклы планет, Sortie/Archon/Arbitration/Archimedea/Steel Path, разломы (обычные + SP), алерты/вторжения/события, особые события (TennoCon/годовщина), Nightwave-задания, торговцы (Баро, Варзия, Дарво, Nightwave). Настройки времени, фильтры, рекомендации, локальный часовой пояс
-- [ ] **Вики** — Warframes, оружие, моды, фракции
-- [ ] **Билдер** — ручной + ИИ, инвентарь модов/мистификаторов
-- [ ] **Звёздная карта** — миссии, квесты, Рейлджек, Дуивири, Стальной путь
+```bash
+npm run db:migrate:dev    # создаёт таблицы
+npm run db:seed           # (опционально) демо-пользователь
+```
 
----
+### 5. Запуск
 
-## Дисклеймер
+```bash
+npm run dev
+```
 
-Это неофициальный фан-сайт. **Warframe®** — торговая марка Digital Extremes Ltd. Проект не связан с Digital Extremes.
+Сайт: <http://localhost:3000>
+
+## Деплой на Railway
+
+1. **Создать проект** → <https://railway.app> → *New Project* → *Deploy from GitHub repo* → выбрать `crit0/voidwarframe`.
+2. **Добавить PostgreSQL** → в проекте *New* → *Database* → *PostgreSQL*.
+3. **Переменные окружения** сервиса приложения:
+   - `DATABASE_URL` → `${{ Postgres.DATABASE_URL }}` (ссылка на БД-сервис)
+   - остальные по необходимости (`AI_PROVIDER`, `AI_API_KEY`, …)
+   - `PORT` Railway задаёт автоматически.
+4. Railway обнаружит `Dockerfile` и `railway.json`, соберёт образ, применит миграции (`prisma migrate deploy`) и запустит сервер.
+5. **Домен** → *Settings* → *Networking* → *Generate Domain*.
+6. **Volume для файлов** → *New* → *Volume* → mount path `/app/uploads` (чтобы загруженные файлы переживали редеплой).
+
+**Автодеплой:** Railway сам пересобирает и деплоит при каждом push в `main`.
+`.github/workflows/ci.yml` дополнительно прогоняет lint + build на каждый push.
+
+## Переменные окружения
+
+См. `.env.example`. Ключевые:
+
+| Переменная | Назначение |
+|-----------|-----------|
+| `DATABASE_URL` | Строка подключения PostgreSQL |
+| `WARFRAME_API_BASE` | Базовый URL внешнего Warframe API |
+| `WARFRAME_CACHE_TTL` | TTL серверного кэша worldstate (сек) |
+| `AI_PROVIDER` | `anthropic` / `openai` / `none` |
+| `AI_API_KEY` | Ключ AI-провайдера |
+| `AI_MODEL` | Идентификатор модели |
+| `UPLOAD_DIR` | Папка для загруженных файлов |
+| `UPLOAD_MAX_BYTES` | Лимит размера файла |
+
+## API routes
+
+| Метод | Путь | Описание |
+|-------|------|----------|
+| GET | `/api/health` | Healthcheck (статус БД) |
+| GET | `/api/worldstate?lang=ru` | Worldstate (кэш) |
+| GET | `/api/mods?lang=ru` | Каталог модов |
+| GET | `/api/arcanes?lang=ru` | Каталог мистификаторов |
+| GET | `/api/items?lang=ru` | Справочник предметов |
+| GET/POST | `/api/ai` | Статус / запрос к AI |
+| GET/POST | `/api/upload` | Список / загрузка файлов |
+| GET/DELETE | `/api/files/:id` | Отдача / удаление файла |
+
+Все ответы в формате `{ ok: boolean, data?, error? }`.
+
+## Масштабирование
+
+- **Backend** — route handlers независимы и stateless; легко выносятся в отдельные сервисы.
+- **Кэш** — `ApiCache` в БД; при росте нагрузки заменяется на Redis без изменения вызывающего кода (`src/lib/cache.ts`).
+- **Файлы** — `src/lib/uploads.ts` инкапсулирует хранилище; переключение на S3/R2 — точечное.
+- **AI** — `src/lib/ai.ts` абстрагирует провайдера.
+- **БД** — Prisma-миграции версионируют схему; новые модели (Wiki, Builder) добавляются без даунтайма.
+
+## Лицензия
+
+Неофициальный фан-проект. Warframe® — торговая марка Digital Extremes Ltd.

@@ -1,10 +1,39 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+/dist
+
+# misc
 .DS_Store
 Thumbs.db
-node_modules/
-.vscode/
-.idea/
+*.pem
 *.log
 .cache/
-dist/
+
+# env files
 .env
 .env.local
+.env*.local
+
+# uploads (runtime user data)
+/uploads/*
+!/uploads/.gitkeep
+
+# editor
+/.vscode
+/.idea
+
+# typescript
+*.tsbuildinfo
+
+# archives
+*.zip

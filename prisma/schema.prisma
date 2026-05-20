@@ -1,0 +1,108 @@
+// Voide Warframe — database schema
+// Provider: PostgreSQL. ORM: Prisma.
+// Run `npm run db:migrate:dev` after editing to create a migration.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+//  User — accounts. Auth is not wired up yet; the model exists
+//  so user-owned data (uploads, AI chats) has a stable FK target.
+// ============================================================
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  uploads       FileUpload[]
+  conversations AiConversation[]
+
+  @@map("users")
+}
+
+enum Role {
+  MEMBER
+  EDITOR
+  ADMIN
+}
+
+// ============================================================
+//  FileUpload — metadata for user-uploaded files. Binary data
+//  lives on disk (UPLOAD_DIR / Railway Volume), not in the DB.
+// ============================================================
+model FileUpload {
+  id           String   @id @default(cuid())
+  filename     String   // stored name on disk (unique, generated)
+  originalName String   // name as uploaded by the user
+  mimeType     String
+  size         Int
+  createdAt    DateTime @default(now())
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
+
+  @@index([userId])
+  @@map("file_uploads")
+}
+
+// ============================================================
+//  AiConversation / AiMessage — chat history with the AI API.
+// ============================================================
+model AiConversation {
+  id        String   @id @default(cuid())
+  title     String   @default("New conversation")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
+
+  messages AiMessage[]
+
+  @@index([userId])
+  @@map("ai_conversations")
+}
+
+model AiMessage {
+  id        String      @id @default(cuid())
+  role      MessageRole
+  content   String      @db.Text
+  createdAt DateTime    @default(now())
+
+  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId String
+
+  @@index([conversationId])
+  @@map("ai_messages")
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+}
+
+// ============================================================
+//  ApiCache — server-side cache for external API responses
+//  (warframestat.us worldstate / mods / items / arcanes).
+//  Lets the site serve data instantly without hammering the API.
+// ============================================================
+model ApiCache {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g. "worldstate:ru"
+  payload   Json
+  fetchedAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([expiresAt])
+  @@map("api_cache")
+}
