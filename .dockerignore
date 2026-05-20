@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.github
+*.md
+*.zip
+.env
+.env.local
+.env*.local
+uploads
+.vscode
+.idea
+npm-debug.log*
