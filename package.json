@@ -2,14 +2,17 @@
   "name": "voidwarframe",
   "version": "1.0.0",
   "private": true,
-  "description": "Voide Warframe — неофициальный фан-сайт по Warframe",
+  "description": "Voide Warframe — неофициальный фан-сайт по Warframe (статический сайт, vanilla JS)",
   "type": "module",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "node -e \"console.log('VoidWarframe is a static site — no build step required')\"",
+    "dev": "node server.js"
   },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/crit0/voidwarframe.git"
