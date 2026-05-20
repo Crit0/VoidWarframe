@@ -1,4 +1,7 @@
-/* GET /api/health — Railway healthcheck target. Reports DB connectivity. */
+/* GET /api/health — Railway healthcheck target.
+   Returns 200 whenever the server process is alive (liveness probe).
+   Database connectivity is reported in the body as informational data,
+   so a transient DB hiccup does not flap the deployment. */
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
@@ -13,9 +16,10 @@ export async function GET() {
   } catch {
     db = "down";
   }
-  const healthy = db === "up";
-  return NextResponse.json(
-    { status: healthy ? "ok" : "degraded", db, ts: new Date().toISOString() },
-    { status: healthy ? 200 : 503 },
-  );
+  return NextResponse.json({
+    status: "ok",
+    db,
+    uptime: Math.round(process.uptime()),
+    ts: new Date().toISOString(),
+  });
 }

@@ -35,10 +35,15 @@ RUN addgroup --system --gid 1001 nodejs \
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-# Prisma engine + schema needed at runtime for migrations.
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+
+# Prisma CLI + engines + generated client + schema/migrations.
+# The CLI is invoked directly via `node` at startup (see CMD), so the
+# fragile node_modules/.bin symlink is not needed — but we copy it too
+# for completeness in case other tooling expects it.
 COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/.bin ./node_modules/.bin
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package.json ./package.json
 
@@ -51,4 +56,6 @@ ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
 # Apply pending DB migrations, then start the server.
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+# Prisma CLI is called directly through node (no npx / .bin resolution)
+# so a missing symlink can never abort startup.
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js migrate deploy && node server.js"]
