@@ -2,7 +2,7 @@
 
 import type { NextRequest } from "next/server";
 import { getItems } from "@/lib/warframe";
-import { ok, serverError } from "@/lib/api-response";
+import { ok, upstreamError } from "@/lib/api-response";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +12,6 @@ export async function GET(req: NextRequest) {
     const { data, source, ageMs } = await getItems(lang);
     return ok({ items: data, count: data.length, source, ageMs });
   } catch (err) {
-    return serverError(err);
+    return upstreamError(err);
   }
 }

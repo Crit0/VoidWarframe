@@ -18,8 +18,19 @@ async function fetchJson<T>(url: string, timeoutMs = 12000): Promise<T> {
   const timer = setTimeout(() => ctrl.abort(), timeoutMs);
   try {
     const res = await fetch(url, { signal: ctrl.signal, headers: { Accept: "application/json" } });
-    if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
-    return (await res.json()) as T;
+    if (!res.ok) throw new Error(`upstream HTTP ${res.status}`);
+    const text = await res.text();
+    if (!text.trim()) throw new Error("upstream returned an empty response");
+    try {
+      return JSON.parse(text) as T;
+    } catch {
+      throw new Error("upstream returned invalid JSON");
+    }
+  } catch (err) {
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new Error("upstream request timed out");
+    }
+    throw err;
   } finally {
     clearTimeout(timer);
   }

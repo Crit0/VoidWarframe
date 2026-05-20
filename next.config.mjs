@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Standalone output keeps the Docker image tiny — only the files the
-  // server actually needs are copied into the final stage.
-  output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
