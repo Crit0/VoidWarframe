@@ -22,9 +22,9 @@ const config: Config = {
         "neon-green": "#4ade80",
       },
       fontFamily: {
-        display: ["Orbitron", "sans-serif"],
-        body: ["Rajdhani", "sans-serif"],
-        mono: ["Share Tech Mono", "monospace"],
+        display: ["var(--font-display)", "sans-serif"],
+        body: ["var(--font-body)", "sans-serif"],
+        mono: ["var(--font-mono)", "monospace"],
       },
       boxShadow: {
         "glow-gold": "0 0 16px rgba(245, 196, 99, 0.35)",

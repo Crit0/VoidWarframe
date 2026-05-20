@@ -1,4 +1,5 @@
 /* Database seed — creates a demo user. Run with `npm run db:seed`.
+   Plain ESM JavaScript so it runs on any Node version without flags.
    Safe to run repeatedly (upsert). */
 
 import { PrismaClient } from "@prisma/client";

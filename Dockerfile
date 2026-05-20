@@ -20,7 +20,8 @@ RUN apk add --no-cache openssl
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npx prisma generate && npm run build
+# `npm run build` runs `prisma generate` then `next build`.
+RUN npm run build
 
 # ---- Stage 3: runtime -------------------------------------
 FROM node:20-alpine AS runner

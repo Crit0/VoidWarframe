@@ -1,12 +1,34 @@
 import type { Metadata, Viewport } from "next";
+import { Orbitron, Rajdhani, Share_Tech_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { BottomNav } from "@/components/BottomNav";
+
+// Self-hosted fonts via next/font — no runtime request to Google.
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["500", "700", "900"],
+  variable: "--font-display",
+  display: "swap",
+});
+const rajdhani = Rajdhani({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-body",
+  display: "swap",
+});
+const techMono = Share_Tech_Mono({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Voide Warframe — Tenno Network",
   description:
     "Full-stack платформа по Warframe: трекер событий, инвентарь модов, AI-ассистент.",
+  icons: { icon: "/favicon.svg" },
 };
 
 export const viewport: Viewport = {
@@ -21,15 +43,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap&subset=cyrillic,latin"
-          rel="stylesheet"
-        />
-      </head>
+    <html
+      lang="ru"
+      className={`${orbitron.variable} ${rajdhani.variable} ${techMono.variable}`}
+    >
       <body>
         <div className="flex min-h-screen">
           <Sidebar />
